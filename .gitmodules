@@ -1,0 +1,9 @@
+[submodule "alcarin-api"]
+	path = alcarin-api
+	url = git@github.com:alcarin-org/alcarin-api.git
+[submodule "alcarin-page"]
+	path = alcarin-page
+	url = git@github.com:alcarin-org/alcarin-page.git
+[submodule "alcarin-lib"]
+	path = alcarin-lib
+	url = git@github.com:alcarin-org/alcarin-lib.git

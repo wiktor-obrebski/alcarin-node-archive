@@ -1,0 +1,29 @@
+webpage:
+  extends:
+    file: alcarin-page/docker-compose.yml
+    service: webpage
+
+api:
+  extends:
+    file: alcarin-api/docker-compose-base.yml
+    service: api
+  links:
+    - redis:redis.link
+    - mongo:mongo.link
+
+mongo:
+  extends:
+    file: alcarin-api/docker-compose-base.yml
+    service: mongo
+
+mongoclient:
+  extends:
+    file: alcarin-api/docker-compose-base.yml
+    service: mongoclient
+  links:
+    - mongo:mongo.link
+
+redis:
+  extends:
+    file: alcarin-api/docker-compose-base.yml
+    service: redis
