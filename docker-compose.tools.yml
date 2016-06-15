@@ -1,0 +1,18 @@
+postgres:
+  extends:
+    file: ./alcarin-api/docker-compose.base.yml
+    service: postgres
+
+tools:
+  build: ./build/tools
+  command: bash
+  environment:
+    PGHOST: postgres.link
+    PGDATABASE: alcarin
+    PGUSER: postgres
+    PGPASSWORD: alcarin
+    DATABASE_URL: postgrces://postgres:alcarin@postgres.link/alcarin
+  links:
+    - postgres:postgres.link
+  volumes:
+    - .:/app
