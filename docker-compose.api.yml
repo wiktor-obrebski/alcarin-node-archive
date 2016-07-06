@@ -1,0 +1,23 @@
+api:
+  build: ./build/api
+  command: npm run start-api
+  volumes:
+    - ./:/app
+  environment:
+    NODE_PATH: ./src/api
+    PORT: 8888
+  ports:
+    - "8888:8888"
+
+redis:
+  image: redis:3.0.4
+
+postgres:
+  image: postgres:9.4
+  volumes:
+    - data:/var/lib/postgresql/data
+  environment:
+    POSTGRES_PASSWORD: alcarin
+    POSTGRES_DB: alcarin
+  ports:
+    - "5432:5432"

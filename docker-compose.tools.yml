@@ -1,6 +1,6 @@
 postgres:
   extends:
-    file: ./alcarin-api/docker-compose.base.yml
+    file: ./docker-compose.api.yml
     service: postgres
 
 tools:
