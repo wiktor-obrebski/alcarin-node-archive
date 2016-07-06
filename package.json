@@ -6,7 +6,8 @@
   "scripts": {
     "start-api": "nodemon --use_strict --harmony --harmony_default_parameters --harmony_destructuring --watch src --exec babel-node ./src/api/index.js",
     "babel-node": "babel-node",
-    "test": "BLUEBIRD_DEBUG=1 mocha --reporter spec --compilers coffee:coffee-script/register"
+    "test": "BLUEBIRD_DEBUG=1 mocha --reporter spec --compilers coffee:coffee-script/register",
+    "db-docs": "java -jar /opt/schemaSpy.jar -t pgsql -o ./docs/db -host postgres.link -db alcarin -u postgres -p alcarin -dp /opt/postgresql-8.0-312.jdbc3.jar -s public"
   },
   "dependencies": {
     "bcrypt": "^0.8.6",

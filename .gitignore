@@ -2,3 +2,4 @@ git
 node_modules
 run-tests
 ./data
+docs/db
