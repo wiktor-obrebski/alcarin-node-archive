@@ -8,13 +8,10 @@ const bcrypt        = Promise.promisifyAll(
     require('bcrypt')
 );
 
-const alcarin      = absRequire('lib');
-
 const jsonwebtoken = require('jsonwebtoken');
-
 jsonwebtoken.verifyAsync = Promise.promisify(jsonwebtoken.verify);
 
-const {Player} = alcarin.system;
+const {Player} = absRequire('lib/system');
 
 module.exports = {
     verifyToken: verifyToken,

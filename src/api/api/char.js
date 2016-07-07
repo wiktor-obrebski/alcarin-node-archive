@@ -1,6 +1,6 @@
-const errors      = absRequire('api/system/errors');
-const {Player}    = absRequire('lib').system;
-const {Character} = absRequire('lib').living;
+const errors    = absRequire('api/system/errors');
+const Player    = absRequire('lib/system/player');
+const Character = absRequire('lib/living/character');
 
 module.exports = {
     activate:    activate,
@@ -10,7 +10,7 @@ module.exports = {
 
 async function activate(args, ev) {
     const playerChars = await Player.chars(ev.client.id);
-    console.log(ev.client.id, playerChars, args.charId);
+
     const char = playerChars.find(char => char.id === args.charId);
     if (char) {
         ev.client.char = char;

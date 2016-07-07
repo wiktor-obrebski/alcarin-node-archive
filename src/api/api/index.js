@@ -1,5 +1,5 @@
 module.exports = {
-    admin: require('./admin'),
+    admin:  require('./admin'),
     player: require('./player/player'),
     game:   require('./game'),
     char:   require('./char'),

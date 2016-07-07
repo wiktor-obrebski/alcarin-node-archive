@@ -1,10 +1,10 @@
 'use strict';
 
-var io            = require('socket.io')();
-var eventRoutes   = absRequire('api/routes');
-var {Permissions} = absRequire('api/system/permissions');
+const io            = require('socket.io')();
+const eventRoutes   = absRequire('api/routes');
+const {Permissions} = absRequire('api/system/permissions');
 
-var GameApiServer = {
+module.exports = {
     loaded: {},
 
     listening: function (serverOrPort) {
@@ -15,5 +15,3 @@ var GameApiServer = {
         );
     }
 };
-
-module.exports = GameApiServer;

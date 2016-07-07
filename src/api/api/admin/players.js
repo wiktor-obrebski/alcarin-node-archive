@@ -1,8 +1,7 @@
 'use strict';
 
 const _             = require('lodash');
-const alcarin       = absRequire('lib');
-const Player        = alcarin.system.Player;
+const Player        = absRequire('lib/system/player');
 const {Permissions} = absRequire('api/system/permissions');
 const errors        = absRequire('api/system/errors');
 

@@ -1,10 +1,10 @@
 var Promise    = require('bluebird');
 var GameObject = require('./game-object');
 var errors     = require('./alcarin/system/errors');
-var mongo      = require('../../mongo');
+// var mongo      = require('../../mongo');
 var _          = require('lodash');
 
-var db      = mongo.driver;
+// var db      = mongo.driver;
 
 /**
  * PositionableGameObject - abstraction for GameObject's that can be placed

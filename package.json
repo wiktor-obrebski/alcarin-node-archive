@@ -16,7 +16,6 @@
     "jsonwebtoken": "^5.4.1",
     "kefir": "^3.2.3",
     "lodash": "^3.10.1",
-    "mongodb": "^2.1",
     "pg": "^5.1.0",
     "pg-promise": "^4.6.3",
     "redis": "^0.12.1",

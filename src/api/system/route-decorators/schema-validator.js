@@ -1,6 +1,6 @@
 'use strict';
 
-const errors = require('../errors');
+const errors = absRequire('api/system/errors');
 
 module.exports = schemaValidateDecorator;
 

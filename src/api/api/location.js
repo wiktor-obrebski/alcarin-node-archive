@@ -1,7 +1,6 @@
 'use strict';
 
-const alcarin     = absRequire('lib');
-const {Character} = alcarin.living;
+const Character = absRequire('lib/living/character');
 
 module.exports = {
     'details': locationDetails,

@@ -1,6 +1,6 @@
 'use strict';
 
-var {AlcarinError} = absRequire('lib').system.errors;
+const {AlcarinError} = absRequire('lib/system/errors');
 
 class ApiError extends AlcarinError {
     constructor(id = 'api.error', message = '') {

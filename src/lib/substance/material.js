@@ -3,7 +3,7 @@
 var gameobject      = require('../../internal/game-object');
 var _               = require('lodash');
 var materialPlugins = require('./plugins');
-var mongo   = require('../../mongo');
+// var mongo   = require('../../mongo');
 
 /**
  * Material is a substation TYPE.

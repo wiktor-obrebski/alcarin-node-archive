@@ -1,9 +1,8 @@
 'use strict';
 
-var _               = require('lodash');
-var alcarin         = absRequire('lib');
-var GameTimeManager = alcarin.system.gametime.Manager;
-var {Permissions}   = absRequire('api/system/permissions');
+const PlayableRace    = absRequire('lib/system/playable-race');
+const GameTime        = absRequire('lib/system/game-time');
+const {Permissions}   = absRequire('api/system/permissions');
 
 module.exports = {
     gametime: getGameTime,
@@ -11,14 +10,11 @@ module.exports = {
 };
 
 function playableRaces(args, ev) {
-    var allRaces = alcarin.system.races.all;
-    ev.answer(
-        _.toArray(allRaces)
-    );
+    ev.answer(PlayableRace.getAll());
 }
 
 async function getGameTime(args, ev) {
-    var gameTime = await GameTimeManager.now();
+    const gameTime = await GameTime.now();
     ev.answer(gameTime);
 }
 getGameTime.settings = {

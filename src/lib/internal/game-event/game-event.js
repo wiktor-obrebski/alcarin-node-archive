@@ -4,7 +4,7 @@ var Promise    = require('bluebird');
 var _          = require('lodash');
 
 var gameObject  = require('../game-object');
-var TimeManager = require('../../alcarin/system/game-time').Manager;
+var TimeManager = require('../../system/game-time').Manager;
 
 var EventsDefinition = require('./events-types').definition;
 

@@ -17,7 +17,7 @@ const PermissionsSets = {
     player: [Permissions.PUBLIC, Permissions.LOGGED],
 };
 
-module.exports = exports = {
+module.exports = {
     Permissions: Permissions,
     PermissionsSets: PermissionsSets,
     toBits(set) {

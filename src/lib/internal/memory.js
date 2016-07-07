@@ -1,10 +1,12 @@
 'use strict';
 
-var Promise = require('bluebird');
-var mongo   = require('../mongo');
-var _       = require('lodash');
+/*
+    this module was written for mongo, need rewrite
+ */
 
-var collection = mongo.driver().collection('game.chars.memory');
+var _ = require('lodash');
+
+// var collection = mongo.driver().collection('game.chars.memory');
 
 var Memory = {
     recall: recallSomething,

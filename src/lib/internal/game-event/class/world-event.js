@@ -1,12 +1,10 @@
 var GameEvent = require('../game-event');
 var _         = require('lodash');
 
-var living = require('../../../alcarin/living');
-
-var co = require('bluebird').coroutine;
+var living = absRequire('lib/living');
 
 module.exports = _.create(GameEvent, {
-    detectRecipients: co(detectRecipientsInDistance)
+    detectRecipients: detectRecipientsInDistance
 });
 
 async function detectRecipientsInDistance() {

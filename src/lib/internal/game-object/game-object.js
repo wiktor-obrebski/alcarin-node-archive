@@ -1,10 +1,5 @@
 'use strict';
 
-var Promise = require('bluebird');
-var _       = require('lodash');
-var mongo   = require('../../mongo');
-var db = mongo.driver;
-
 module.exports = {
     /**
      *  Represent game object that have direct relation in database.
@@ -57,7 +52,7 @@ function eventsManagerGetter() {
 }
 
 async function updateProperties(keyOrSet, value) {
-    if (!_.isArray(keyOrSet)) {
+    if (!Array.isArray(keyOrSet)) {
         let key = keyOrSet;
         keyOrSet = {};
         keyOrSet[key] = value;
@@ -65,6 +60,6 @@ async function updateProperties(keyOrSet, value) {
 
     var collection = db().collection(this.collection);
     await collection.updateAsync({_id: this.id}, {$set: keyOrSet});
-    _.assign(this._raw, keyOrSet);
+    Object.assign(this._raw, keyOrSet);
 }
 

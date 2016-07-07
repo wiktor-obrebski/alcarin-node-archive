@@ -1,4 +1,4 @@
-var redis = require('../../redis');
+var redis = absRequire('common/redis');
 var _     = require('lodash');
 
 // this module need refactoring.
@@ -8,37 +8,39 @@ var _     = require('lodash');
 const DAY_SEC = 60 * 60 * 24 * 4;
 
 module.exports = {
-    Manager: {
-        /**
-         * return number of seconds since begining of game world
-         * @type {int}
-         */
-        currentTimestamp: getCurrentTimestamp,
-        /**
-         * pause game time. every action dependent from time will be stoped.
-         */
-        pause:     pauseTime,
-        /**
-         * resume game time (after pause)
-         */
-        resume:    resumeTime,
-        /**
-         * check if game time has been paused
-         * @type {boolean}
-         */
-        freezed:   fetchFreeze,
-        /**
-         * return current time as helper GameTime object
-         * @type {GameTime}
-         */
-        now:       nowGameTime,
+    /**
+     * return number of seconds since begining of game world
+     * @type {int}
+     */
+    currentTimestamp: getCurrentTimestamp,
 
-        /**
-         * return given timestamp as helper GameTime object
-         * @type {[type]}
-         */
-        fromTimestamp: gameTimeFromTimestamp,
-    },
+    /**
+     * pause game time. every action dependent from time will be stoped.
+     */
+    pause: pauseTime,
+
+    /**
+     * resume game time (after pause)
+     */
+    resume: resumeTime,
+
+    /**
+     * check if game time has been paused
+     * @type {boolean}
+     */
+    freezed: fetchFreeze,
+
+    /**
+     * return current time as helper GameTime object
+     * @type {GameTime}
+     */
+    now: nowGameTime,
+
+    /**
+     * return given timestamp as helper GameTime object
+     * @type {[type]}
+     */
+    fromTimestamp: gameTimeFromTimestamp,
 };
 
 /**
@@ -139,25 +141,24 @@ function gameTimeFromTimestamp(timestamp) {
     });
 }
 
-
-//     # light intensity, from 0-1
-//     # lighting: ->
-//     #     switch
-//     #     hour = @hour false
-//     #         when hour > 92 or hour <= 4
-//     #             _intensity = ((hour + 4) % 96) / 8
-//     #             _timeofday = 'morning'
-//     #         when hour > 4 and hour <= 44
-//     #             _intensity = 1
-//     #             _timeofday = 'day'
-//     #         when hour > 44 and hour <= 52
-//     #             _intensity = 1 - (hour % 44) / 8
-//     #             _timeofday = 'evening'
-//     #         when hour > 52 and hour <= 92
-//     #             _intensity = 0
-//     #             _timeofday = 'night'
-//     #         else throw Error "Can not choose lighting system. Wrong hour: #{hour}"
-//     #     return {
-//     #         intensity: _intensity
-//     #         timeofday: _timeofday
-//     #     }
+// light intensity, from 0-1
+// lighting: ->
+//     switch
+//     hour = @hour false
+//         when hour > 92 or hour <= 4
+//             _intensity = ((hour + 4) % 96) / 8
+//             _timeofday = 'morning'
+//         when hour > 4 and hour <= 44
+//             _intensity = 1
+//             _timeofday = 'day'
+//         when hour > 44 and hour <= 52
+//             _intensity = 1 - (hour % 44) / 8
+//             _timeofday = 'evening'
+//         when hour > 52 and hour <= 92
+//             _intensity = 0
+//             _timeofday = 'night'
+//         else throw Error "Can not choose lighting system. Wrong hour: #{hour}"
+//     return {
+//         intensity: _intensity
+//         timeofday: _timeofday
+//     }

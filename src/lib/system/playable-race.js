@@ -4,5 +4,5 @@ var Human = {
 };
 
 module.exports = {
-    all: {Human}
+    all: [Human]
 };

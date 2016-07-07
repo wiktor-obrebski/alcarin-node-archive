@@ -1,9 +1,10 @@
-var mongo     = require('../mongo');
-var db        = mongo.driver;
+/*
+ this module needs to be fixed, was wrote for mongodb
+ */
 var _         = require('lodash');
 
-var substance = require('../alcarin/substance');
-var living    = require('../alcarin/living');
+var substance = require('../substance');
+var living    = require('../living');
 
 /**
  * container is abstraction - object that can store some substantion, chars or
@@ -39,7 +40,7 @@ module.exports = {
 
 
 async function createSubstanceInsideContainer(material, data) {
-    var substanceRaw = _.assign({}, data, {
+    var substanceRaw = Object.assign({}, data, {
         id: mongo.ObjectID(),
         material: _.omit(material._raw, '_id')
     });

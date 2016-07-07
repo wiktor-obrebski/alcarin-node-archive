@@ -1,21 +1,13 @@
-// absolute require support (as alternative for relative requiring)
-global.absLibRequire = function(name) {
-    return require(__dirname + '/' + name);
-}
-
-const mongo   = require('./mongo');
-const redis   = require('./redis');
-const _       = require('lodash');
-const alcarin = require('./alcarin');
-const db      = require('./db');
+const redis   = absRequire('common/redis');
+const db      = absRequire('common/db');
 
 /**
  * before using this library initialization should be done.
  * it connect to redis, database and do some preparation work
  */
-module.exports = exports = _.create(alcarin, {
-    initialize: initializeAlcarinLib
-});
+module.exports = {
+    initialize: initializeAlcarinLib,
+};
 
 async function initializeAlcarinLib(config) {
     config = config || {};
