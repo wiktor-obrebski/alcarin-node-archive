@@ -2,7 +2,7 @@
 
 const {createService} = require('../game-object-service');
 
-const events = absRequire('lib/internal/game-event');
+const events = require('../internal/game-event');
 
 const EventsManager         = events.Manager;
 const GameEventClassFactory = events.class.Factory;

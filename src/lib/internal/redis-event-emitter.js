@@ -1,6 +1,6 @@
 'use strict';
 
-var redis             = absRequire('common/redis');
+var redis             = require('../../common/redis');
 var redisEventEmitter = require('redis-eventemitter');
 
 /**

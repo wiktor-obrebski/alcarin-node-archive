@@ -1,7 +1,7 @@
 var GameEvent = require('../game-event');
 var _         = require('lodash');
 
-var living = absRequire('lib/living');
+var living = require('../../../living');
 
 module.exports = _.create(GameEvent, {
     detectRecipients: detectRecipientsInDistance

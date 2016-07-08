@@ -1,11 +1,10 @@
 'use strict';
 
-const errors = absRequire('api/system/errors');
+const errors = require('../errors');
 
 module.exports = schemaValidateDecorator;
 
 var JjvSchema = require('jjv');
-var ObjectID  = require('bson').ObjectID;
 
 var jjvSchema = new JjvSchema();
 

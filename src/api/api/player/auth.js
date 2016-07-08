@@ -1,8 +1,8 @@
 'use strict';
 
-const permissions   = absRequire('api/system/permissions');
-const errors        = absRequire('api/system/errors');
-const config        = absRequire('api/config');
+const permissions   = require('../../system/permissions');
+const errors        = require('../../system/errors');
+const config        = require('../../config');
 const Promise       = require('bluebird');
 const bcrypt        = Promise.promisifyAll(
     require('bcrypt')
@@ -11,7 +11,7 @@ const bcrypt        = Promise.promisifyAll(
 const jsonwebtoken = require('jsonwebtoken');
 jsonwebtoken.verifyAsync = Promise.promisify(jsonwebtoken.verify);
 
-const {Player} = absRequire('lib/system');
+const {Player} = require('../../../lib/system');
 
 module.exports = {
     verifyToken: verifyToken,

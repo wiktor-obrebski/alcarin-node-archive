@@ -1,4 +1,4 @@
-const {db}   = absRequire('common/db');
+const {db}   = require('../common/db');
 const assert = require('assert');
 const _      = require('lodash');
 

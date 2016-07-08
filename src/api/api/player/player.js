@@ -4,9 +4,9 @@ const Promise  = require('bluebird');
 const bcrypt = Promise.promisifyAll(
     require('bcrypt')
 );
-const Player      = absRequire('lib/system/player');
-const errors      = absRequire('api/system/errors');
-const permissions = absRequire('api/system/permissions');
+const Player      = require('../../../lib/system/player');
+const errors      = require('../../system/errors');
+const permissions = require('../../system/permissions');
 
 const auth = require('./auth');
 

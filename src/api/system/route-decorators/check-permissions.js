@@ -1,7 +1,7 @@
 'use strict';
 
-const permissions = absRequire('api/system/permissions');
-const errors      = absRequire('api/system/errors');
+const permissions = require('../permissions');
+const errors      = require('../errors');
 
 module.exports = checkPermissionDecorator;
 

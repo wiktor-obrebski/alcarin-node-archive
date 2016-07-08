@@ -1,5 +1,5 @@
-var _          = require('lodash');
-var material   = require('./material');
+var _        = require('lodash');
+var material = require('./material');
 
 /**
  * Substance is a instance of MATERIAL. It can not occur independently, it need
@@ -11,7 +11,7 @@ var Substance = {
      * substances have not separate collection, so their are serialize as full
      * data, not only links
      */
-    link: () => _.assign({}, this._raw)
+    link: () => Object.assign({}, this._raw)
 };
 
 module.exports = {

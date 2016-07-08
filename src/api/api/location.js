@@ -1,6 +1,6 @@
 'use strict';
 
-const Character = absRequire('lib/living/character');
+const Character = require('../../lib/living/character');
 
 module.exports = {
     'details': locationDetails,

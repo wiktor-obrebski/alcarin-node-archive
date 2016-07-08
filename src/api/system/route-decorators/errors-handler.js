@@ -1,6 +1,6 @@
 'use strict';
 
-var logger     = absRequire('api/logger');
+var logger     = require('../../logger');
 
 module.exports = errorsHandler;
 

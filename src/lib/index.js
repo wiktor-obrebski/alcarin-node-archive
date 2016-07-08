@@ -1,5 +1,5 @@
-const redis   = absRequire('common/redis');
-const db      = absRequire('common/db');
+const redis   = require('../common/redis');
+const db      = require('../common/db');
 
 /**
  * before using this library initialization should be done.

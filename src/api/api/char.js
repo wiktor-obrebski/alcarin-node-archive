@@ -1,6 +1,6 @@
-const errors    = absRequire('api/system/errors');
-const Player    = absRequire('lib/system/player');
-const Character = absRequire('lib/living/character');
+const errors    = require('../system/errors');
+const Player    = require('../../lib/system/player');
+const Character = require('../../lib/living/character');
 
 module.exports = {
     activate:    activate,

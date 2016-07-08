@@ -1,4 +1,4 @@
-var redis = absRequire('common/redis');
+var redis = require('../../common/redis');
 var _     = require('lodash');
 
 // this module need refactoring.

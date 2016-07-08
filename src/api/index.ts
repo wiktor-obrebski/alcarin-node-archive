@@ -1,12 +1,12 @@
 'use strict';
 
-require('../require-helpers');
+// require('../require-helpers');
 
-var gameServer = absRequire('api/system/game-server');
-var config     = absRequire('api/config');
-var logger     = absRequire('api/logger');
+var gameServer = require('./system/game-server');
+var config     = require('./config');
+var logger     = require('./logger');
 
-var alcarin    = absRequire('lib');
+var alcarin    = require('../lib');
 
 main();
 

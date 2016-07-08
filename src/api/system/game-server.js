@@ -1,8 +1,8 @@
 'use strict';
 
 const io            = require('socket.io')();
-const eventRoutes   = absRequire('api/routes');
-const {Permissions} = absRequire('api/system/permissions');
+const eventRoutes   = require('../routes');
+const {Permissions} = require('./permissions');
 
 module.exports = {
     loaded: {},

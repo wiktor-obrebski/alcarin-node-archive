@@ -1,10 +1,10 @@
 'use strict';
 
 var _                   = require('lodash');
-var api                 = absRequire('api/api');
-var decorators          = absRequire('api/system/route-decorators').reverse();
-var eventRequestFactory = absRequire('api/system/event-request');
-var {Permissions}       = absRequire('api/system/permissions');
+var api                 = require('./api');
+var decorators          = require('./system/route-decorators').reverse();
+var eventRequestFactory = require('./system/event-request');
+var {Permissions}       = require('./system/permissions');
 
 var routing = {
     'game.gametime':       api.game.gametime,

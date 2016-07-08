@@ -1,8 +1,8 @@
 'use strict';
 
-const PlayableRace    = absRequire('lib/system/playable-race');
-const GameTime        = absRequire('lib/system/game-time');
-const {Permissions}   = absRequire('api/system/permissions');
+const PlayableRace    = require('../../lib/system/playable-race');
+const GameTime        = require('../../lib/system/game-time');
+const {Permissions}   = require('../system/permissions');
 
 module.exports = {
     gametime: getGameTime,

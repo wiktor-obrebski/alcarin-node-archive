@@ -1,9 +1,9 @@
 'use strict';
 
 const _             = require('lodash');
-const Player        = absRequire('lib/system/player');
-const {Permissions} = absRequire('api/system/permissions');
-const errors        = absRequire('api/system/errors');
+const Player        = require('../../../lib/system/player');
+const {Permissions} = require('../../system/permissions');
+const errors        = require('../../system/errors');
 
 module.exports = {
     fetch: fetchPlayers,

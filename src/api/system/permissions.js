@@ -1,4 +1,4 @@
-const config = absRequire('api/config');
+const config = require('../config');
 
 // # user can have many permissions type. by use this permissions we decide
 // # what api action user can do

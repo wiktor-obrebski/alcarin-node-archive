@@ -1,7 +1,7 @@
 'use strict';
 
 var eventsDefinition = require('./events-types').definition;
-var GameEventFactory    = require('./game-event').Factory;
+var GameEventFactory = require('./game-event').Factory;
 
 /**
  * provide way to get and resolve all events for specific observer.

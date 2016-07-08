@@ -1,6 +1,6 @@
 api:
   build: ./build/api
-  command: npm run start-api
+  command: npm start
   volumes:
     - ./:/app
   environment:

@@ -1,4 +1,4 @@
-var types = require('./events-types');
+var types  = require('./events-types');
 var events = require('./game-event');
 
 module.exports = {
