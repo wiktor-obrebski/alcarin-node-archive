@@ -52,6 +52,16 @@ const Tables = [
 ];
 
 exports.up = function(pgm) {
+    pgm.sql(`
+        CREATE OR REPLACE FUNCTION information_schema._pg_keypositions() RETURNS SETOF integer
+        LANGUAGE sql
+        IMMUTABLE
+        AS $pg_keypositions$
+        select g.s
+        from generate_series(1,current_setting('max_index_keys')::int, 1)
+        as g(s)
+        $pg_keypositions$;
+    `);
     Tables.forEach(
         (tbl) => pgm.createTable(tbl.name, tbl.columns, tbl.options)
     )
@@ -61,4 +71,7 @@ exports.down = function(pgm) {
     Tables.reverse().forEach(
         (tbl) => pgm.dropTable(tbl.name)
     );
+    pgm.sql(`
+        DROP FUNCTION IF EXISTS information_schema._pg_keypositions()
+    `);
 };
