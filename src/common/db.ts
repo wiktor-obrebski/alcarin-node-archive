@@ -1,9 +1,10 @@
-const promisePostgres = require('pg-promise')();
-const Observable = require('kefir');
+import * as promisePostgresLib from 'pg-promise'
+import * as Observable from 'kefir'
 
+const promisePostgres = promisePostgresLib();
 var driver = null;
 
-module.exports = exports = {
+export default {
     connect: connectToDatabase,
     db() {
         return driver;

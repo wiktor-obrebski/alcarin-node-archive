@@ -1,8 +1,6 @@
-'use strict';
+import Character from '../../lib/living/character'
 
-const Character = require('../../lib/living/character');
-
-module.exports = {
+export default {
     'details': locationDetails,
 };
 

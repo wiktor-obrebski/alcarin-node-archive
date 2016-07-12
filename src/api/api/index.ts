@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     admin:  require('./admin'),
     player: require('./player/player'),
     game:   require('./game'),

@@ -3,5 +3,4 @@ node_modules
 run-tests
 ./data
 docs/db
-build/_dist
 typings/

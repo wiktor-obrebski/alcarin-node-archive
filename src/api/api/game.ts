@@ -1,10 +1,8 @@
-'use strict';
+import PlayableRace from '../../lib/system/playable-race'
+import GameTime from '../../lib/system/game-time'
+import {Permissions} from '../system/permissions'
 
-const PlayableRace    = require('../../lib/system/playable-race');
-const GameTime        = require('../../lib/system/game-time');
-const {Permissions}   = require('../system/permissions');
-
-module.exports = {
+export default {
     gametime: getGameTime,
     playableRaces: playableRaces
 };

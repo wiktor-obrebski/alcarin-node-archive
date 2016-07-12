@@ -1,13 +1,13 @@
-'use strict';
+import * as ioLib from 'socket.io'
+import eventRoutes from '../routes'
+import {Permissions} from './permissions'
 
-const io            = require('socket.io')();
-const eventRoutes   = require('../routes');
-const {Permissions} = require('./permissions');
+const io = ioLib();
 
-module.exports = {
+export default {
     loaded: {},
 
-    listening: function (serverOrPort) {
+    listening(serverOrPort) {
         eventRoutes.setupRouting(io);
         io.listen(serverOrPort);
         io.on('connection', (socket) =>

@@ -1,4 +1,4 @@
-module.exports = [
+export default [
     require('./errors-handler'),
     require('./schema-validator'),
     require('./log-api-call'),

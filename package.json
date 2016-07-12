@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Alcarin game world definition package.",
   "main": "src/index.js",
+  "typings": "typings/index.d.ts",
   "scripts": {
     "start": "nodemon --exec ts-node src/api/index.ts",
     "babel-node": "babel-node",

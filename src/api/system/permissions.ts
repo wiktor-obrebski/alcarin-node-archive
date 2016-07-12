@@ -1,8 +1,8 @@
-const config = require('../config');
+import config from '../config'
 
 // # user can have many permissions type. by use this permissions we decide
 // # what api action user can do
-const Permissions = {
+export const Permissions = {
     SUPERUSER: 64,
 
     PUBLIC: 1,
@@ -11,15 +11,13 @@ const Permissions = {
     MANAGING_PLAYERS: 21,
 };
 
-const PermissionsSets = {
+export const PermissionsSets = {
     superuser: [Permissions.SUPERUSER, Permissions.MANAGING_PLAYERS],
     // # normal player, after registration
     player: [Permissions.PUBLIC, Permissions.LOGGED],
 };
 
-module.exports = {
-    Permissions: Permissions,
-    PermissionsSets: PermissionsSets,
+export default {
     toBits(set) {
         return set.reduce((prev, perm) => {
             const bitmask = 1 << (perm - 1);

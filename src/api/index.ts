@@ -1,18 +1,17 @@
 'use strict';
 
-// require('../require-helpers');
+import gameServer from './system/game-server'
+import config     from './config'
+import logger     from './logger'
+import alcarin from '../lib'
 
-var gameServer = require('./system/game-server');
-var config     = require('./config');
-var logger     = require('./logger');
-
-var alcarin    = require('../lib');
+import fs = require('fs');
 
 main();
 
 async function main() {
     try {
-        await alcarin.initialize(config);
+        await alcarin.initilize(config);
         var port = process.env.PORT || 8888;
         gameServer.listening(port);
 
@@ -22,4 +21,3 @@ async function main() {
         process.exit();
     }
 }
-

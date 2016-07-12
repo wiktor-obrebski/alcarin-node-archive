@@ -1,11 +1,11 @@
-const errors    = require('../system/errors');
-const Player    = require('../../lib/system/player');
-const Character = require('../../lib/living/character');
+import errors from '../system/errors'
+import Player from '../../lib/system/player'
+import Character from '../../lib/living/character'
 
-module.exports = {
-    activate:    activate,
-    events:      fetchEvents,
-    say:         sayPublic,
+export default {
+    activate: activate,
+    events:   fetchEvents,
+    say:      sayPublic,
 };
 
 async function activate(args, ev) {

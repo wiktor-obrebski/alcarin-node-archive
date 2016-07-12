@@ -1,11 +1,7 @@
-'use strict';
+import permissions from '../permissions'
+import errors from '../errors'
 
-const permissions = require('../permissions');
-const errors      = require('../errors');
-
-module.exports = checkPermissionDecorator;
-
-function checkPermissionDecorator(eventHandler, settings) {
+export function checkPermissionDecorator(eventHandler, settings) {
     return (data, ev) => {
         if (settings && settings.permissions) {
             var playerPerm = ev.client.permissions || permissions.Permissions.PUBLIC;

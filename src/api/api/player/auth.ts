@@ -1,19 +1,16 @@
-'use strict';
+import permissions from '../../system/permissions'
+import errors      from '../../system/errors'
+import config      from '../../config'
+import * as Promise from 'bluebird'
+import * as bcryptLib from 'bcrypt'
 
-const permissions   = require('../../system/permissions');
-const errors        = require('../../system/errors');
-const config        = require('../../config');
-const Promise       = require('bluebird');
-const bcrypt        = Promise.promisifyAll(
-    require('bcrypt')
-);
+import * as jsonwebtoken from 'jsonwebtoken'
+import {Player} from '../../../lib/system'
 
-const jsonwebtoken = require('jsonwebtoken');
 jsonwebtoken.verifyAsync = Promise.promisify(jsonwebtoken.verify);
+const bcrypt            = Promise.promisifyAll(bcryptLib);
 
-const {Player} = require('../../../lib/system');
-
-module.exports = {
+export default {
     verifyToken: verifyToken,
     login:       login,
 };

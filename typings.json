@@ -1,5 +1,15 @@
 {
   "globalDependencies": {
-    "node": "registry:dt/node#6.0.0+20160621231320"
+    "bcrypt": "registry:dt/bcrypt#0.0.0+20160316155526",
+    "bluebird": "registry:dt/bluebird#2.0.0+20160701023356",
+    "jjv": "registry:dt/jjv#1.0.2+20160317120654",
+    "jsonwebtoken": "registry:dt/jsonwebtoken#0.0.0+20160627133958",
+    "kefir": "registry:dt/kefir#3.2.0+20160316155526",
+    "lodash": "registry:dt/lodash#3.10.0+20160619033623",
+    "node": "registry:dt/node#6.0.0+20160621231320",
+    "pg-promise": "registry:dt/pg-promise#0.0.0+20160417141255",
+    "redis": "registry:dt/redis#0.12.1+20160619023014",
+    "socket.io": "registry:dt/socket.io#1.4.4+20160317120654",
+    "winston": "registry:dt/winston#0.0.0+20160417152829"
   }
 }

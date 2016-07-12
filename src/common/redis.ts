@@ -1,15 +1,13 @@
-'use strict';
-
-var redis   = require('redis');
-var Promise = require('bluebird');
-var _       = require('lodash');
+import * as redis   from 'redis'
+import * as Promise from 'bluebird'
+import * as _       from 'lodash'
 
 const DEFAULT_PORT = 6379;
 
 var redisClient = null;
 var redisConfig = null;
 
-module.exports = getRedisClient;
+export default getRedisClient;
 
 function getRedisClient() {
     if (redisClient === null) {

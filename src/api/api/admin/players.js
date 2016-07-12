@@ -1,11 +1,9 @@
-'use strict';
+import * as _ from 'lodash'
+import Playerfrom from '../../../lib/system/player'
+import {Permissions} from '../../system/permissions'
+import errors from '../../system/errors'
 
-const _             = require('lodash');
-const Player        = require('../../../lib/system/player');
-const {Permissions} = require('../../system/permissions');
-const errors        = require('../../system/errors');
-
-module.exports = {
+export default {
     fetch: fetchPlayers,
     updatePermissions: updatePermissions
 };

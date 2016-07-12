@@ -1,10 +1,6 @@
-'use strict';
+import logger from '../../logger'
 
-var logger     = require('../../logger');
-
-module.exports = errorsHandler;
-
-function errorsHandler(eventHandler) {
+export function errorsHandler(eventHandler) {
     return async function(data, ev) {
         try {
             await eventHandler(data, ev);

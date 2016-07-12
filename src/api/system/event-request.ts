@@ -1,10 +1,6 @@
-'use strict';
+import logger from '../logger'
 
-const logger = require('../logger');
-
-module.exports = exports = EventRequestFactory;
-
-function EventRequestFactory(client, eventName, emitCallback) {
+export function EventRequestFactory(client, eventName, emitCallback) {
     return {
         _replied: false,
         client: client,

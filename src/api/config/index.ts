@@ -1,4 +1,4 @@
-var config = require('./config');
+import config from './config';
 
 var localConfig = {};
 
@@ -10,4 +10,4 @@ try {
     }
 }
 
-module.exports = Object.assign(config, localConfig);
+export default Object.assign(config, localConfig);

@@ -1,16 +1,16 @@
 'use strict';
 
-const Promise  = require('bluebird');
-const bcrypt = Promise.promisifyAll(
-    require('bcrypt')
-);
-const Player      = require('../../../lib/system/player');
-const errors      = require('../../system/errors');
-const permissions = require('../../system/permissions');
+import * as Promise from 'bluebird'
+import * as bcryptLib from 'bcrypt'
 
-const auth = require('./auth');
+import Player from '../../../lib/system/player'
+import errors from '../../system/errors'
+import permissions from '../../system/permissions'
+import auth from './auth'
 
-module.exports = {
+const bcrypt = Promise.promisifyAll(bcryptLib)
+
+export default {
     'create': createPlayer,
     'createChar': createChar,
     'fetchChars': fetchChars,

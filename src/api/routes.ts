@@ -1,10 +1,8 @@
-'use strict';
-
-var _                   = require('lodash');
-var api                 = require('./api');
-var decorators          = require('./system/route-decorators').reverse();
-var eventRequestFactory = require('./system/event-request');
-var {Permissions}       = require('./system/permissions');
+import * as _ from 'lodash'
+import api from './api'
+import decorators from './system/route-decorators'
+import {EventRequestFactory} from './system/event-request'
+import {Permissions} from './system/permissions'
 
 var routing = {
     'game.gametime':       api.game.gametime,
@@ -29,16 +27,17 @@ var routing = {
     'admin.update-permissions': api.admin.players.updatePermissions
 };
 
-module.exports = {
+export default {
     routing: routing,
     setupRouting: attachEventHandlers
 };
 
-var decoratedRouting = _.mapValues(routing, decorateEventHandler);
+const decoratedRouting = _.mapValues(routing, decorateEventHandler);
+const revDecorators = decorators.reverse();
 
 function decorateEventHandler(handler) {
     var settings = handler.settings;
-    for (let decorateFn of decorators) {
+    for (let decorateFn of revDecorators) {
         handler = decorateFn(handler, settings);
     }
     return handler;
@@ -68,7 +67,7 @@ function clientOnConnect(socket) {
         return function onSocketEventHappen(...args) {
 
             // last argument can be used to send immediately response for event
-            var ev = eventRequestFactory(
+            var ev = EventRequestFactory(
                 client,
                 eventName,
                 this.emit.bind(this)

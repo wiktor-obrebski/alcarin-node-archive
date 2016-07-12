@@ -1,12 +1,8 @@
-'use strict';
+import {ValidationFailed} from '../errors'
 
-const errors = require('../errors');
+import * as JjvSchema from 'jjv'
 
-module.exports = schemaValidateDecorator;
-
-var JjvSchema = require('jjv');
-
-var jjvSchema = new JjvSchema();
+let jjvSchema = new JjvSchema();
 
 Object.assign(jjvSchema.defaultOptions, {
     useCoerce: true,
@@ -15,12 +11,12 @@ Object.assign(jjvSchema.defaultOptions, {
 jjvSchema.addType('PostgresId', (val) => +val === val);
 jjvSchema.addTypeCoercion('PostgresId', (nb) => +nb);
 
-function schemaValidateDecorator(eventHandler, settings) {
+export function schemaValidateDecorator(eventHandler, settings) {
     return (data, ev) => {
         if (settings && settings.schema) {
             var jsonErr = jjvSchema.validate(settings.schema, data);
             if (jsonErr) {
-                const err = new errors.ValidationFailed(jsonErr.validation);
+                const err = new ValidationFailed(jsonErr.validation);
                 return ev.answerError(err);
             }
         }
