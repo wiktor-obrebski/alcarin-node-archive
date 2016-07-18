@@ -1,5 +1,5 @@
-import redis from '../common/redis'
-import db from '../common/db'
+import {init as initRedis} from '../common/redis'
+import {connect as dbConnect} from '../common/db'
 
 /**
  * before using this library initialization should be done.
@@ -10,8 +10,8 @@ export default {
 };
 
 async function initializeAlcarinLib(config: any) {
-    const dbPromise    = db.connect(config.postgresConnectionString);
-    const redisPromise = redis.init(config.redis);
+    const dbPromise    = dbConnect(config.postgresConnectionString);
+    const redisPromise = initRedis(config.redis);
 
     return await Promise.all([dbPromise, redisPromise]);
 }

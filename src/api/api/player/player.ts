@@ -1,26 +1,55 @@
-'use strict';
+import EventHandler from '../event-handler'
 
 import * as Promise from 'bluebird'
 import * as bcryptLib from 'bcrypt'
 
 import Player from '../../../lib/system/player'
-import errors from '../../system/errors'
-import permissions from '../../system/permissions'
+import {ApiError} from '../../system/errors'
+import {PermissionsSets, default as permissions} from '../../system/permissions'
 import auth from './auth'
 
 const bcrypt = Promise.promisifyAll(bcryptLib)
 
 export default {
-    'create': createPlayer,
-    'createChar': createChar,
-    'fetchChars': fetchChars,
+    'create': EventHandler(createPlayer, {
+        schema: {
+            'type': 'object',
+            'properties': {
+                'email': {
+                    'type': 'string',
+                    'format': 'email'
+                },
+                'password': {
+                    'minLength': 4,
+                    'type': 'string'
+                }
+            },
+            'required': ['email', 'password']
+        }
+    }),
+    'createChar': EventHandler(createChar, {
+        schema: {
+            'type': 'object',
+            'properties': {
+                'name': {
+                    'type': 'string',
+                    'minLength': 1
+                }
+                // # 'race': {
+                // #     'type': 'object'
+                // # }
+            },
+            'required': ['name']
+        }
+    }),
+    'fetchChars': EventHandler(fetchChars),
 };
 
 async function createPlayer(args, ev) {
     const existingPlayer = await Player.findByField('email', args.email);
 
     if (existingPlayer !== null) {
-        const err = new errors.ApiError(
+        const err = new ApiError(
             'email.occupied',
             'Email used by another player'
         );
@@ -32,27 +61,11 @@ async function createPlayer(args, ev) {
     const player = await Player.create({
         email: args.email,
         password: cryptedPassword,
-        permissions: permissions.toBits(permissions.PermissionsSets.player)
+        permissions: permissions.toBits(PermissionsSets.player)
     });
 
-    return await auth.login(args, ev);
+    return await auth.login.handler(args, ev);
 }
-createPlayer.settings = {
-    schema: {
-        'type': 'object',
-        'properties': {
-            'email': {
-                'type': 'string',
-                'format': 'email'
-            },
-            'password': {
-                'minLength': 4,
-                'type': 'string'
-            }
-        },
-        'required': ['email', 'password']
-    }
-};
 
 async function createChar(args, ev) {
     const char = await Player.createChar(ev.client.id, {
@@ -60,22 +73,6 @@ async function createChar(args, ev) {
     });
     return ev.answer(char);
 }
-
-createChar.settings = {
-    schema: {
-        'type': 'object',
-        'properties': {
-            'name': {
-                'type': 'string',
-                'minLength': 1
-            }
-            // # 'race': {
-            // #     'type': 'object'
-            // # }
-        },
-        'required': ['name']
-    }
-};
 
 async function fetchChars(args, ev) {
     const chars = await Player.chars(ev.client.id);
@@ -85,6 +82,3 @@ async function fetchChars(args, ev) {
     }));
     return ev.answer(charsList);
 }
-fetchChars.settings = {
-    scheme: {}
-};

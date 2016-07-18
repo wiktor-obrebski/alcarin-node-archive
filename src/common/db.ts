@@ -4,12 +4,14 @@ import * as Observable from 'kefir'
 const promisePostgres = promisePostgresLib();
 var driver = null;
 
-export default {
-    connect: connectToDatabase,
-    db() {
-        return driver;
-    }
+export {
+    connectToDatabase as connect,
+    db,
 };
+
+function db() {
+    return driver;
+}
 
 async function connectToDatabase(connectionString) {
     //'postgres://postgres:alcarin@postgres.link/alcarin'

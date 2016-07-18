@@ -18,24 +18,13 @@ export const PermissionsSets = {
 };
 
 export default {
-    toBits(set) {
-        return set.reduce((prev, perm) => {
-            const bitmask = 1 << (perm - 1);
-            return prev | bitmask;
+    toBits(set: Array<number>): number {
+        return set.reduce((prev: number, perm: number): number => {
+            const bitmask: number = 1 << (perm - 1);
+            return (prev | bitmask);
         }, 0);
     },
-    has(playerPermissions, permission) {
-        return playerPermissions & permission === permission;
-    },
-    fromBits(bits) {
-        const permissions = Object.values(Permissions);
-        return permissions.reduce(
-            (permissionsSet, perm) => {
-                const bitmask = 1 << (perm - 1);
-                return (bits & bitmask) ?
-                    permissionsSet.concat(perm) : permissionsSet;
-            },
-            []
-        );
-    },
+    has(playerPermissions: number, permission: number): Boolean {
+        return (playerPermissions & permission) === permission;
+    }
 };

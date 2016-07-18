@@ -1,8 +1,8 @@
-var Human = {
+const Human = {
     id: 'human',
     possibleGenders: ['man', 'woman'],
 };
 
-module.exports = {
+export default {
     all: [Human]
 };

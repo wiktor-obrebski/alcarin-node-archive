@@ -1,5 +1,5 @@
-var redis = require('../../common/redis');
-var _     = require('lodash');
+import {redis} from '../../common/redis'
+import * as _     from 'lodash'
 
 // this module need refactoring.
 // three time values should be stored in one object, so we can faster
@@ -7,7 +7,7 @@ var _     = require('lodash');
 
 const DAY_SEC = 60 * 60 * 24 * 4;
 
-module.exports = {
+export default {
     /**
      * return number of seconds since begining of game world
      * @type {int}

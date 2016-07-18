@@ -1,6 +1,6 @@
-var _ = require('lodash');
+import * as _ from 'lodash'
 
-module.exports = {
+export default {
     /**
      * this game event can be spotted on entire world.
      * any kind of characters can feel it effect.

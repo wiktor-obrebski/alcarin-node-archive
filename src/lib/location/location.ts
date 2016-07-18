@@ -1,12 +1,10 @@
-'use strict';
-
-const {createService} = require('../game-object-service');
+import {createService} from '../game-object-service'
 
 /**
  * temporary, world global location where everybody goes
  */
 
-module.exports = createService('location', {
+export default createService('location', {
     // inside: loadInsideContainer,
     // link: () => ({
     //     type: 'loc',

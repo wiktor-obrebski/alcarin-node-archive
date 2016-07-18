@@ -1,7 +1,9 @@
+import EventHandler from './event-handler'
+
 import Character from '../../lib/living/character'
 
 export default {
-    'details': locationDetails,
+    'details': EventHandler(locationDetails)
 };
 
 async function locationDetails(args, ev) {
@@ -9,4 +11,3 @@ async function locationDetails(args, ev) {
     var loc = await Character.location(char);
     return ev.answer(loc);
 }
-locationDetails.settings = {};

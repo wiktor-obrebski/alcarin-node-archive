@@ -1,6 +1,11 @@
+import errorsHandler from './errors-handler'
+import schemaValidator from './schema-validator'
+import logApiCall from './log-api-call'
+import checkPermissions from './check-permissions'
+
 export default [
-    require('./errors-handler'),
-    require('./schema-validator'),
-    require('./log-api-call'),
-    require('./check-permissions'),
+    errorsHandler,
+    schemaValidator,
+    logApiCall,
+    checkPermissions,
 ];

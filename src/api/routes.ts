@@ -1,30 +1,37 @@
 import * as _ from 'lodash'
-import api from './api'
-import decorators from './system/route-decorators'
+
+import gameApi from './api/game'
+import locationApi from './api/location'
+import charApi from './api/char'
+import authApi from './api/player/auth'
+import playerApi from './api/player/player'
+import adminPlayersApi from './api/admin/players'
+
+import decorators from './system/route-decorators/index'
 import {EventRequestFactory} from './system/event-request'
 import {Permissions} from './system/permissions'
 
 var routing = {
-    'game.gametime':       api.game.gametime,
-    'game.playable-races': api.game.playableRaces,
+    'game.gametime':       gameApi.gametime,
+    'game.playable-races': gameApi.playableRaces,
 
-    'player.create':      api.player.create,
-    'player.create-char': api.player.createChar,
-    'player.fetch-chars': api.player.fetchChars,
+    'player.create':      playerApi.create,
+    'player.create-char': playerApi.createChar,
+    'player.fetch-chars': playerApi.fetchChars,
 
     // link current connection with specific character - if it belong to current player.
     // now events around character will be broadcast by this connection.
-    'char.activate': api.char.activate,
-    'char.events':   api.char.events,
-    'char.say':      api.char.say,
+    'char.activate': charApi.activate,
+    'char.events':   charApi.events,
+    'char.say':      charApi.say,
 
-    'auth.login':       api.auth.login,
-    'auth.verifyToken': api.auth.verifyToken,
+    'auth.login':       authApi.login,
+    'auth.verifyToken': authApi.verifyToken,
 
-    'loc.details': api.loc.details,
+    'loc.details': locationApi.details,
 
-    'admin.players': api.admin.players.fetch,
-    'admin.update-permissions': api.admin.players.updatePermissions
+    'admin.players': adminPlayersApi.fetch,
+    'admin.update-permissions': adminPlayersApi.updatePermissions
 };
 
 export default {
@@ -32,13 +39,13 @@ export default {
     setupRouting: attachEventHandlers
 };
 
+const reversedDecorators    = decorators.reverse();
 const decoratedRouting = _.mapValues(routing, decorateEventHandler);
-const revDecorators = decorators.reverse();
 
-function decorateEventHandler(handler) {
-    var settings = handler.settings;
-    for (let decorateFn of revDecorators) {
-        handler = decorateFn(handler, settings);
+function decorateEventHandler(eventHandler) {
+    var handler = eventHandler.handler;
+    for (let decorateFn of reversedDecorators) {
+        handler = decorateFn(handler, eventHandler.settings);
     }
     return handler;
 }
@@ -46,7 +53,6 @@ function decorateEventHandler(handler) {
 function attachEventHandlers(io) {
     io.on('connection', clientOnConnect);
 }
-
 
 function clientOnConnect(socket) {
     // this object is current client characterization.

@@ -1,11 +1,35 @@
-import errors from '../system/errors'
+import EventHandler from './event-handler'
+
+import {PermissionDenied, CharActivationNeeded} from '../system/errors'
 import Player from '../../lib/system/player'
 import Character from '../../lib/living/character'
 
 export default {
-    activate: activate,
+    activate: EventHandler(activate, {
+        schema: {
+            'type': 'object',
+            'properties': {
+                'charId': {
+                    'type': 'PostgresId'
+                }
+            },
+            'required': ['charId']
+        }
+    }),
     events:   fetchEvents,
-    say:      sayPublic,
+    say:      EventHandler(sayPublic, {
+        schema: {
+            'type': 'object',
+            'properties': {
+                'content': {
+                    'type': 'string',
+                    'minLength': 1,
+                    'maxLength': 2500
+                }
+            },
+            'required': ['content']
+        }
+    }),
 };
 
 async function activate(args, ev) {
@@ -17,21 +41,9 @@ async function activate(args, ev) {
         return ev.answer(char);
     }
 
-    const err = new errors.PermissionDenied("Can't activate this character.");
+    const err = new PermissionDenied("Can't activate this character.");
     return ev.answerError(err);
 }
-activate.settings = {
-    schema: {
-        'type': 'object',
-        'properties': {
-            'charId': {
-                'type': 'PostgresId'
-            }
-        },
-        'required': ['charId']
-    }
-};
-
 async function sayPublic(args, ev) {
     const char = ev.client.char;
     if (char) {
@@ -43,24 +55,8 @@ async function sayPublic(args, ev) {
     }
     return ev.answer(true);
 }
-sayPublic.settings = {
-    schema: {
-        'type': 'object',
-        'properties': {
-            'content': {
-                'type': 'string',
-                'minLength': 1,
-                'maxLength': 2500
-            }
-        },
-        'required': ['content']
-    }
-};
 
 async function fetchEvents(args, ev) {
     const events = await Character.events(ev.client.char);
     return ev.answer(events);
 }
-fetchEvents.settings = {
-    schema: {}
-};

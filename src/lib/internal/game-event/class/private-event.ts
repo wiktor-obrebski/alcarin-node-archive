@@ -1,8 +1,7 @@
-var GameEvent = require('../game-event').GameEvent;
-var _         = require('lodash');
-var Promise   = require('bluebird');
+import {GameEvent} from '../game-event'
+import * as _ from 'lodash'
 
-module.exports = _.create(GameEvent, {
+export default _.create(GameEvent, {
     detectRecipients: ownerOnlyRecipient
 });
 

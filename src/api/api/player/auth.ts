@@ -1,18 +1,43 @@
-import permissions from '../../system/permissions'
-import errors      from '../../system/errors'
+import EventHandler from '../event-handler'
+
+import {Permissions} from '../../system/permissions'
+import {AuthorizationFailed, InvalidToken}      from '../../system/errors'
 import config      from '../../config'
 import * as Promise from 'bluebird'
 import * as bcryptLib from 'bcrypt'
 
 import * as jsonwebtoken from 'jsonwebtoken'
-import {Player} from '../../../lib/system'
+import Player from '../../../lib/system/player'
 
-jsonwebtoken.verifyAsync = Promise.promisify(jsonwebtoken.verify);
 const bcrypt            = Promise.promisifyAll(bcryptLib);
 
 export default {
-    verifyToken: verifyToken,
-    login:       login,
+    verifyToken: EventHandler(verifyToken, {
+        schema: {
+            'type': 'object',
+            'properties': {
+                'token': {
+                    'type': 'string'
+                }
+            },
+            'required': ['token']
+        }
+    }),
+    login: EventHandler(login, {
+        schema: {
+            'type': 'object',
+            'properties': {
+                'email': {
+                    'type': 'string',
+                    'format': 'email'
+                },
+                'password': {
+                    'type': 'string'
+                }
+            },
+            'required': ['email', 'password']
+        }
+    }),
 };
 
 /**
@@ -30,12 +55,12 @@ async function login(args, ev) {
     const cryptedPassword = await bcrypt.hashAsync(args.password, 10);
 
     if (!isPasswordMatch) {
-        const err = new errors.AuthorizationFailed('Invalid password or username');
+        const err = new AuthorizationFailed('Invalid password or username');
         return ev.answerError(err);
     }
 
     const permissionsBitValue = parseInt(player.permissions) ||
-                                permissions.Permissions.PUBLIC;
+                                Permissions.PUBLIC;
 
     // we updated client data. it's pernament for this socket connection!
     Object.assign(ev.client, {
@@ -66,25 +91,10 @@ async function login(args, ev) {
         );
     }
 }
-login.settings = {
-    schema: {
-        'type': 'object',
-        'properties': {
-            'email': {
-                'type': 'string',
-                'format': 'email'
-            },
-            'password': {
-                'type': 'string'
-            }
-        },
-        'required': ['email', 'password']
-    }
-};
 
 async function verifyToken(args, ev) {
     try {
-        var data = await jsonwebtoken.verifyAsync(
+        var data = await jsonwebtoken.verify(
             args.token,
             config.jwtAppSecret,
             {algorithms: ['HS256']}
@@ -99,17 +109,6 @@ async function verifyToken(args, ev) {
             permissions: data.permissions
         });
     } catch (err) {
-        return ev.answerFail(new errors.InvalidToken('Invalid Token'));
+        return ev.answerFail(new InvalidToken('Invalid Token'));
     }
 }
-verifyToken.settings = {
-    schema: {
-        'type': 'object',
-        'properties': {
-            'token': {
-                'type': 'string'
-            }
-        },
-        'required': ['token']
-    }
-};

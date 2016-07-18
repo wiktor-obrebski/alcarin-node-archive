@@ -1,9 +1,7 @@
-'use strict';
-
 import gameServer from './system/game-server'
 import config     from './config'
 import logger     from './logger'
-import alcarin from '../lib'
+import alcarin    from '../lib'
 
 import fs = require('fs');
 

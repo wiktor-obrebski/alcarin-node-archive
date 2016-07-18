@@ -1,6 +1,6 @@
-const {db}   = require('../common/db');
-const assert = require('assert');
-const _      = require('lodash');
+import {db} from '../common/db'
+import * as assert from 'assert'
+import * as _ from 'lodash'
 
 const GameObjectService = {
     find: findGameObjects,
@@ -18,7 +18,7 @@ const GameObjectService = {
  * GameObject's Service.
  * fetching from db and creating in db various game objects.
  */
-module.exports = {
+export {
     GameObjectService,
     createService,
 };

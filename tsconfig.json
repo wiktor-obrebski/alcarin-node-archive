@@ -3,10 +3,11 @@
         "allowJs": true,
         "moduleResolution": "node",
         "module": "commonjs",
-        "target": "es2015",
+        "target": "es6",
         "noImplicitAny": false,
         "sourceMap": false,
-        "rootDir": "./src"
+        "rootDir": "./src",
+        "experimentalDecorators": true
     },
     "files": [
         "typings/index.d.ts",

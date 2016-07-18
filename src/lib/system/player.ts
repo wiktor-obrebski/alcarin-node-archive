@@ -1,13 +1,12 @@
-'use strict';
 // I want create services for managing objects.
 // objects shouldn't have function for self manipulation,
 
-const {createService, GameObjectService} = require('../game-object-service');
+import {createService} from '../game-object-service'
 
-const {Character}       = require('../living');
-const {Location}        = require('../location');
+import Character from '../living/character'
+import Location from '../location/location'
 
-module.exports = createService('player', {
+export default createService('player', {
     chars: fetchPlayerChars,
     createChar: createCharForPlayer
 });
