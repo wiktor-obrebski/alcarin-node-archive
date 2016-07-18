@@ -1,0 +1,52 @@
+{
+  "name": "alcarin-lib",
+  "version": "0.0.1",
+  "description": "Alcarin game world definition package.",
+  "main": "src/index.js",
+  "typings": "typings/index.d.ts",
+  "scripts": {
+    "start": "nodemon --exec ts-node src/api/index.ts",
+    "babel-node": "babel-node",
+    "test": "BLUEBIRD_DEBUG=1 mocha --reporter spec --compilers coffee:coffee-script/register",
+    "db-docs": "java -jar /opt/schemaSpy.jar -t pgsql -o ./docs/db -host postgres.link -db alcarin -u postgres -p alcarin -dp /opt/postgresql-8.0-312.jdbc3.jar -s public"
+  },
+  "dependencies": {
+    "bcrypt": "^0.8.6",
+    "bluebird": "^2.10.2",
+    "jjv": "^1.0.2",
+    "jsonwebtoken": "^5.4.1",
+    "kefir": "^3.2.3",
+    "lodash": "^3.10.1",
+    "pg": "^5.1.0",
+    "pg-promise": "^4.6.3",
+    "redis": "^0.12.1",
+    "redis-eventemitter": "^1.0.1",
+    "socket.io": "^1.4.6",
+    "socket.io-redis": "^1.0.0",
+    "winston": "^1.1.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.9.0",
+    "babel-eslint": "^5.0.4",
+    "babel-plugin-transform-async-to-generator": "^6.8.0",
+    "babel-preset-es2015": "^6.9.0",
+    "eslint": "^1.10.3",
+    "node-pg-migrate": "0.0.10",
+    "ts-node": "^0.9.3",
+    "typescript": "^1.8.10",
+    "typings": "^1.3.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/alcarin-org/alcarin-lib.git"
+  },
+  "keywords": [
+    "alcarin"
+  ],
+  "author": "psychowico",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alcarin-org/alcarin-lib/issues"
+  },
+  "homepage": "https://github.com/alcarin-org/alcarin-lib"
+}
