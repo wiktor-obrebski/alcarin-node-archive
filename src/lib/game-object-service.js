@@ -1,17 +1,16 @@
 import {db} from '../common/db'
+import {createObject} from '../common/util/functions'
 import * as assert from 'assert'
-import * as _ from 'lodash'
+import * as R from 'ramda'
 
 const GameObjectService = {
-    find: findGameObjects,
-    findOne: findOneGameObject,
-    findById: findGameObjectById,
-    findByField: findGameObjectByField,
-    // fromRaw: gameObjectFromRaw,
-
-    create: createNewGameObject,
-
-    // count: findGameObjectsCount
+    find:        R.curry(findGameObjects),
+    findOne:     R.curry(findOneGameObject),
+    findById:    R.curry(findGameObjectById),
+    findByField: R.curry(findGameObjectByField)(false),
+    create:      R.curry(createNewGameObject),
+    // fromRaw:  gameObjectFromRaw,
+    // count:    findGameObjectsCount
 }
 
 /**
@@ -23,16 +22,18 @@ export {
     createService,
 };
 
-function createService(table, object) {
-    const dedicatedService = _.mapValues(
-        GameObjectService,
-        (fn) => _.partial(fn, table)
+function createService(table, extendProps) {
+    const dedicatedService = R.mapObjIndexed(
+        (fn) => fn(table),
+        GameObjectService
     );
-    const service = _.create(dedicatedService, object);
-    return Object.defineProperty(service, 'table', {
-        writable: false,
-        value: table,
-    });
+    // const properties = Object.assign(extendProps, {table: table});
+    const prepareService = R.compose(
+        Object.freeze,
+        createObject(extendProps)
+    );
+
+    return prepareService(dedicatedService);
 }
 
 async function findGameObjectsCount(where) {
@@ -40,7 +41,7 @@ async function findGameObjectsCount(where) {
     return await collection.countAsync(where);
 }
 
-function findGameObjectByField(table, name, value, mustExist = false) {
+function findGameObjectByField(mustExist, table, name, value) {
     const fnName = mustExist ? 'one' : 'oneOrNone';
     return db()[fnName](
         `SELECT * FROM ${table} WHERE ${name}=$1`, value
@@ -70,7 +71,7 @@ async function findGameObjectsCore(table, methodName, where) {
 }
 
 function findGameObjectById(table, id) {
-    return findGameObjectByField(table, 'id', id, true);
+    return findGameObjectByField(true, table, 'id', id);
 }
 
 async function createNewGameObject(table, data) {

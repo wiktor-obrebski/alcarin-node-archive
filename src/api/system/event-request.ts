@@ -1,8 +1,9 @@
 import logger from '../logger'
 
 export function EventRequestFactory(client, eventName, emitCallback) {
+    var _replied = false;
+
     return {
-        _replied: false,
         client: client,
         name: eventName,
         answer: answerEvent,
@@ -11,26 +12,26 @@ export function EventRequestFactory(client, eventName, emitCallback) {
         answerFail : answerError,
         _callback: emitCallback,
     };
-}
 
-function answerEvent(...args) {
-    if (this._replied) {
-        throw new Error(`
-            Trying to reply more than one time for same "${this.name}" event.
-        `);
+    function answerEvent(...args) {
+        if (_replied) {
+            throw new Error(`
+                Trying to reply more than one time for same "${eventName}" event.
+            `);
+        }
+
+        args.unshift(`${eventName}:reply`);
+        const result = emitCallback(...args);
+        _replied = true;
+        return result;
     }
 
-    args.unshift(`${this.name}:reply`);
-    const result = this._callback.apply(null, args);
-    this._replied = true;
-    return result;
-}
-
-function answerError(errObject) {
-    var err = {
-        reason: errObject.id,
-        body: errObject.message
-    };
-    logger.info(`System error "${errObject.id}"`);
-    return this.answer({error: err});
+    function answerError(errObject) {
+        var err = {
+            reason: errObject.id,
+            body: errObject.message
+        };
+        logger.info(`System error "${errObject.id}"`);
+        return answerEvent({error: err});
+    }
 }

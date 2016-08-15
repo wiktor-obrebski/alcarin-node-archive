@@ -12,8 +12,7 @@ export default createService('player', {
 });
 
 async function fetchPlayerChars(playerId) {
-    const chars = await Character.find({fk_player: playerId});
-    return chars;
+    return await Character.find({fk_player: playerId});
 }
 
 async function createCharForPlayer(playerId, args) {
