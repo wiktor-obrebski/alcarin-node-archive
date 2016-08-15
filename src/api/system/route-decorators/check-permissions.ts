@@ -1,7 +1,7 @@
 import {Permissions, default as permissions} from '../permissions'
 import {PermissionDenied} from '../errors'
 
-export default function checkPermissionDecorator(eventHandler, settings) {
+export default function checkPermissionDecorator(settings, eventHandler) {
     return (data, ev) => {
         if (settings && settings.permissions) {
             var playerPerm = ev.client.permissions || Permissions.PUBLIC;

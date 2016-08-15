@@ -1,4 +1,5 @@
 import * as _ from 'lodash'
+import * as R from 'ramda'
 
 import gameApi from './api/game'
 import locationApi from './api/location'
@@ -10,6 +11,8 @@ import adminPlayersApi from './api/admin/players'
 import decorators from './system/route-decorators/index'
 import {EventRequestFactory} from './system/event-request'
 import {Permissions} from './system/permissions'
+
+import {log} from '../common/util/functions'
 
 var routing = {
     'game.gametime':       gameApi.gametime,
@@ -34,21 +37,24 @@ var routing = {
     'admin.update-permissions': adminPlayersApi.updatePermissions
 };
 
+const decorateEventHandler = R.curry(function (decorators, eventHandler) {
+    const curryDecorators = R.map(R.compose(
+        R.flip(R.call)(eventHandler.settings),
+        R.curry,
+    ));
+
+    const decoration = R.compose(
+        ...curryDecorators(decorators)
+    );
+    return decoration(eventHandler.handler);
+});
+
+const decoratedRouting = R.map(decorateEventHandler(decorators), routing);
+
 export default {
-    routing: routing,
+    routing: decoratedRouting,
     setupRouting: attachEventHandlers
 };
-
-const reversedDecorators    = decorators.reverse();
-const decoratedRouting = _.mapValues(routing, decorateEventHandler);
-
-function decorateEventHandler(eventHandler) {
-    var handler = eventHandler.handler;
-    for (let decorateFn of reversedDecorators) {
-        handler = decorateFn(handler, eventHandler.settings);
-    }
-    return handler;
-}
 
 function attachEventHandlers(io) {
     io.on('connection', clientOnConnect);
@@ -63,21 +69,23 @@ function clientOnConnect(socket) {
         permissions: [Permissions.PUBLIC],
     };
 
-    for (let eventName in decoratedRouting) {
-        var api = decoratedRouting[eventName];
+    const listenOnSocket = R.flip(socket.on).bind(socket);
+    const eventHandler = R.curry(baseEventHandler);
 
-        socket.on(eventName, eventHandler(eventName, api));
-    }
+    const enableListening = R.compose(
+        R.mapObjIndexed(listenOnSocket),
+        R.mapObjIndexed(eventHandler)
+    );
+    enableListening(decoratedRouting);
 
-    function eventHandler(eventName, apiHandler) {
+    function baseEventHandler(apiHandler, eventName) {
         return function onSocketEventHappen(...args) {
-
             // last argument can be used to send immediately response for event
-            var ev = EventRequestFactory(
+            const ev = Object.freeze(EventRequestFactory(
                 client,
                 eventName,
                 this.emit.bind(this)
-            );
+            ));
 
             // first data argument is only one we used, we ignore others
             apiHandler(args.shift(), ev);

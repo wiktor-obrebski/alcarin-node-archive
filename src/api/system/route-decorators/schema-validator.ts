@@ -11,7 +11,7 @@ Object.assign(jjvEnv.defaultOptions, {
 jjvEnv.addType('PostgresId', (val) => +val === val);
 jjvEnv.addTypeCoercion('PostgresId', (nb) => +nb);
 
-export default function schemaValidateDecorator(eventHandler, settings) {
+export default function schemaValidateDecorator(settings, eventHandler) {
     return (data, ev) => {
         if (settings && settings.schema) {
             var jsonErr = jjvEnv.validate(settings.schema, data);

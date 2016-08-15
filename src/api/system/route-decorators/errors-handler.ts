@@ -1,6 +1,6 @@
 import logger from '../../logger'
 
-export default function errorsHandler(eventHandler) {
+export default function errorsHandler(settings, eventHandler) {
     return async function(data, ev) {
         try {
             await eventHandler(data, ev);

@@ -16,7 +16,7 @@ export default {
             'required': ['charId']
         }
     }),
-    events:   fetchEvents,
+    events:   EventHandler(fetchEvents),
     say:      EventHandler(sayPublic, {
         schema: {
             'type': 'object',
@@ -57,6 +57,6 @@ async function sayPublic(args, ev) {
 }
 
 async function fetchEvents(args, ev) {
-    const events = await Character.events(ev.client.char);
-    return ev.answer(events);
+    // const events = await Character.events(ev.client.char);
+    return ev.answer([]);
 }
