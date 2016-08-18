@@ -14,6 +14,7 @@ const asyncLog = R.curry(
 const ErrorHandler = {};
 
 const onCatch = (fn) => Object.assign(Object.create(ErrorHandler), {fn: fn});
+const onPromiseCatch = R.curry((fn, promise) => promise.catch(fn));
 
 const composeAsync = (...functions) => {
     const iterator = (promise, fnOrObj) => ErrorHandler.isPrototypeOf(fnOrObj) ?
@@ -27,8 +28,12 @@ const composeAsync = (...functions) => {
     );
 };
 
+const pipeAsync = R.reverse(composeAsync);
+
 export {
     composeAsync,
+    pipeAsync,
     onCatch,
+    onPromiseCatch,
     asyncLog,
 };

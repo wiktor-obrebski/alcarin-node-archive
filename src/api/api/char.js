@@ -33,7 +33,7 @@ export default {
 };
 
 async function activate(args, ev) {
-    const playerChars = await Player.chars(ev.client.id);
+    const playerChars = await Player.chars(ev.auth.playerId);
 
     const char = playerChars.find(char => char.id === args.charId);
     if (char) {

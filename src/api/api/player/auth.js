@@ -49,20 +49,23 @@ export default {
  * he also get back a token - that can be used to get privilages back later, without login
  * it can be useful after connection lose, page reload and similar
  */
-async function login(args, ev) {
+async function login(ev) {
+    const {email, password} = ev.data;
+
+    const isPasswordMatch = R.curry(_isPasswordMatch);
     const loginUserByEmail = composeAsync(
         onCatch(ev.answerError),
         ev.answer,
         updatePermissions,
-        isPasswordMatch,
+        isPasswordMatch(password),
         Player.findByField('email')
     );
 
-    return loginUserByEmail(args.email);
+    return loginUserByEmail(email);
 
-    async function isPasswordMatch(player) {
+    async function _isPasswordMatch(password, player) {
         const match = player && await bcrypt.compareAsync(
-            args.password, player.password
+            password, player.password
         );
         if (!match) {
             return Promise.reject(
@@ -76,12 +79,6 @@ async function login(args, ev) {
         const permissionsBitValue = parseInt(player.permissions) ||
                                     Permissions.PUBLIC;
 
-        // we updated client data. it's pernament for this socket connection!
-        Object.assign(ev.client, {
-            permissions: permissionsBitValue,
-            id: player.id
-        });
-
         return {
             token: generateSessionToken(player, permissionsBitValue),
             permissions: permissionsBitValue
@@ -90,13 +87,12 @@ async function login(args, ev) {
 
     function generateSessionToken(player, permissions) {
         const dataToSign = {
-            id         : player.id,
+            playerId   : player.id,
             permissions: permissions,
         };
 
         const options = {
-            expiresIn: config.sessionExpireSeconds,
-            algorithm: 'HS256'
+            expiresIn: config.sessionExpireSeconds, algorithm: 'HS256'
         };
 
         return jsonwebtoken.sign(
@@ -107,23 +103,12 @@ async function login(args, ev) {
     }
 }
 
-async function verifyToken(args, ev) {
-    try {
-        var data = await jsonwebtoken.verify(
-            args.token,
-            config.jwtAppSecret,
-            {algorithms: ['HS256']}
-        );
-
-        Object.assign(ev.client, {
-            permissions: data.permissions,
-            id: data.id
-        });
-
-        return ev.answer({
-            permissions: data.permissions
-        });
-    } catch (err) {
+async function verifyToken(ev) {
+    if (ev.auth.invalidToken) {
         return ev.answerFail(new InvalidToken('Invalid Token'));
     }
+
+    return ev.answer({
+        permissions: ev.auth.permissions
+    });
 }

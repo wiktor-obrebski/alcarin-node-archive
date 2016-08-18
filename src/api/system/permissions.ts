@@ -15,6 +15,7 @@ export const PermissionsSets = {
     superuser: [Permissions.SUPERUSER, Permissions.MANAGING_PLAYERS],
     // # normal player, after registration
     player: [Permissions.PUBLIC, Permissions.LOGGED],
+    anonymous: [Permissions.PUBLIC],
 };
 
 export default {

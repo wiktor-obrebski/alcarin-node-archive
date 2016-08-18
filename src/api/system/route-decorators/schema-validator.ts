@@ -12,14 +12,14 @@ jjvEnv.addType('PostgresId', (val) => +val === val);
 jjvEnv.addTypeCoercion('PostgresId', (nb) => +nb);
 
 export default function schemaValidateDecorator(settings, eventHandler) {
-    return (data, ev) => {
+    return (ev) => {
         if (settings && settings.schema) {
-            var jsonErr = jjvEnv.validate(settings.schema, data);
+            var jsonErr = jjvEnv.validate(settings.schema, ev.data);
             if (jsonErr) {
                 const err = new ValidationFailed(jsonErr.validation);
                 return ev.answerError(err);
             }
         }
-        return eventHandler(data, ev);
+        return eventHandler(ev);
     };
 }

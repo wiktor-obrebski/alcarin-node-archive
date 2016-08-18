@@ -1,9 +1,12 @@
 import logger from '../logger'
+import {clone} from '../../common/util/functions'
 
-export function EventRequestFactory(client, eventName, emitCallback) {
+export function EventRequestFactory(client, eventName, data, auth, emitCallback) {
     var _replied = false;
-
-    return {
+    console.log('here', auth, clone(auth));
+    return Object.freeze({
+        auth: clone(auth),
+        data: clone(data),
         client: client,
         name: eventName,
         answer: answerEvent,
@@ -11,7 +14,7 @@ export function EventRequestFactory(client, eventName, emitCallback) {
         answerError: answerError,
         answerFail : answerError,
         _callback: emitCallback,
-    };
+    });
 
     function answerEvent(...args) {
         if (_replied) {

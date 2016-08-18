@@ -13,7 +13,10 @@ const createObject = R.curry(
     )(proto)
 );
 
+const clone = (val) => Object.freeze(Object.assign({}, val));
+
 export {
     log,
     createObject,
+    clone,
 }

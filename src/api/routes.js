@@ -1,5 +1,6 @@
 import * as _ from 'lodash'
 import * as R from 'ramda'
+import * as jsonwebtoken from 'jsonwebtoken'
 
 import gameApi from './api/game'
 import locationApi from './api/location'
@@ -10,7 +11,8 @@ import adminPlayersApi from './api/admin/players'
 
 import decorators from './system/route-decorators/index'
 import {EventRequestFactory} from './system/event-request'
-import {Permissions} from './system/permissions'
+import {Permissions, PermissionsSets} from './system/permissions'
+import config from './config'
 
 import {log} from '../common/util/functions'
 
@@ -80,16 +82,39 @@ function clientOnConnect(socket) {
 
     function baseEventHandler(apiHandler, eventName) {
         return function onSocketEventHappen(...args) {
-            // last argument can be used to send immediately response for event
-            const ev = Object.freeze(EventRequestFactory(
+            const authData = args.pop();
+
+            const playerPermissions = authorizeMessage(
+                authData ? authData.token : ''
+            );
+
+            const ev = EventRequestFactory(
                 client,
                 eventName,
+                args.shift(),
+                playerPermissions,
                 this.emit.bind(this)
-            ));
+            );
 
-            // first data argument is only one we used, we ignore others
-            apiHandler(args.shift(), ev);
+            apiHandler(ev);
         };
+    }
+
+    function authorizeMessage(token) {
+        try {
+            const verify = R.curryN(3, jsonwebtoken.verify.bind(jsonwebtoken));
+            const decryptData = R.compose(
+                R.pick(['permissions', 'playerId']),
+                verify(R.__, config.jwtAppSecret, {algorithms: ['HS256']})
+            );
+
+            return decryptData(token);
+        } catch (err) {
+            return {
+                invalidToken: true,
+                permissions: PermissionsSets.anonymous,
+            };
+        }
     }
 }
 

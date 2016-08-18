@@ -2,6 +2,7 @@ import EventHandler from '../event-handler'
 
 import * as Promise from 'bluebird'
 import * as bcryptLib from 'bcrypt'
+import * as R from 'ramda'
 
 import Player from '../../../lib/system/player'
 import {ApiError} from '../../system/errors'
@@ -45,8 +46,9 @@ export default {
     'fetchChars': EventHandler(fetchChars),
 };
 
-async function createPlayer(args, ev) {
-    const existingPlayer = await Player.findByField('email', args.email);
+async function createPlayer(ev) {
+    const {email, password} = ev.data;
+    const existingPlayer = await Player.findByField('email', email);
 
     if (existingPlayer !== null) {
         const err = new ApiError(
@@ -56,29 +58,26 @@ async function createPlayer(args, ev) {
         return ev.answerError(err);
     }
 
-    const cryptedPassword = await bcrypt.hashAsync(args.password, 10);
+    const cryptedPassword = await bcrypt.hashAsync(password, 10);
 
     const player = await Player.create({
-        email: args.email,
+        email: email,
         password: cryptedPassword,
         permissions: permissions.toBits(PermissionsSets.player)
     });
 
-    return await auth.login.handler(args, ev);
+    return await auth.login.handler(ev);
 }
 
-async function createChar(args, ev) {
-    const char = await Player.createChar(ev.client.id, {
-        name: args.name
+async function createChar(ev) {
+    const char = await Player.createChar(ev.auth.playerId, {
+        name: ev.data.name
     });
     return ev.answer(char);
 }
 
-async function fetchChars(args, ev) {
-    const chars = await Player.chars(ev.client.id);
-    const charsList = chars.map((char) => ({
-        id: char.id,
-        name: char.name,
-    }));
+async function fetchChars(ev) {
+    const chars = await Player.chars(ev.auth.playerId);
+    const charsList = chars.map(R.pick(['id', 'name']));
     return ev.answer(charsList);
 }

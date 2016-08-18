@@ -11,11 +11,11 @@ export default {
     playableRaces: EventHandler(playableRaces),
 };
 
-function playableRaces(args, ev) {
+function playableRaces(ev) {
     ev.answer(PlayableRace.all);
 }
 
-async function getGameTime(args, ev) {
+async function getGameTime(ev) {
     const gameTime = await GameTime.now();
     ev.answer(gameTime);
 }
