@@ -19,11 +19,11 @@ export default {
         schema: {
             'type': 'object',
             'properties': {
-                'token': {
+                '__apitoken': {
                     'type': 'string'
                 }
             },
-            'required': ['token']
+            'required': ['__apitoken']
         }
     }),
     login: EventHandler(login, {

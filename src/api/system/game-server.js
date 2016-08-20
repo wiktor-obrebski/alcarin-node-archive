@@ -1,5 +1,5 @@
 import * as ioLib from 'socket.io'
-import eventRoutes from '../routes'
+import {setupRouting} from '../routing/route'
 import {Permissions} from './permissions'
 
 const io = ioLib();
@@ -8,7 +8,7 @@ export default {
     loaded: {},
 
     listening(serverOrPort) {
-        eventRoutes.setupRouting(io);
+        setupRouting(io);
         io.listen(serverOrPort);
         io.on('connection', (socket) =>
             socket.emit('alcarin.init', {permissions: Permissions})

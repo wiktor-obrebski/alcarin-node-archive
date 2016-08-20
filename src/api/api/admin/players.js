@@ -2,10 +2,38 @@ import * as _ from 'lodash'
 import Playerfrom from '../../../lib/system/player'
 import {Permissions} from '../../system/permissions'
 import errors from '../../system/errors'
+import EventHandler from '../event-handler'
 
 export default {
-    fetch: fetchPlayers,
-    updatePermissions: updatePermissions
+    fetch: EventHandler(fetchPlayers, {
+        schema: {
+            'type': 'object',
+            'properties': {
+                'email': {
+                    'type': 'string',
+                },
+            },
+            'required': ['email']
+        }
+    }),
+    updatePermissions: EventHandler(updatePermissions, {
+        schema: {
+            'type': 'object',
+            'properties': {
+                '_id': {
+                    'type': 'string',
+                },
+                'permissions': {
+                    'type': 'array',
+                    'items': {
+                        type: 'number'
+                    },
+                    'uniqueItems': true
+                },
+            },
+            'required': ['_id', 'permissions']
+        }
+    })
 };
 
 async function fetchPlayers(args, ev) {
@@ -17,17 +45,6 @@ async function fetchPlayers(args, ev) {
         _.invoke(players, 'serialize')
     );
 }
-fetchPlayers.settings = {
-    schema: {
-        'type': 'object',
-        'properties': {
-            'email': {
-                'type': 'string',
-            },
-        },
-        'required': ['email']
-    }
-};
 
 async function updatePermissions(args, ev) {
     var updatePlayer = await PlayerFactory.findById(args._id);
@@ -41,21 +58,3 @@ async function updatePermissions(args, ev) {
     await updatePlayer.set('permissions', args.permissions);
     return ev.answer(updatePlayer.serialize());
 }
-updatePermissions.settings = {
-    schema: {
-        'type': 'object',
-        'properties': {
-            '_id': {
-                'type': 'string',
-            },
-            'permissions': {
-                'type': 'array',
-                'items': {
-                    type: 'number'
-                },
-                'uniqueItems': true
-            },
-        },
-        'required': ['_id', 'permissions']
-    }
-};

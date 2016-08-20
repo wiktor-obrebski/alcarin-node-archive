@@ -1,5 +1,5 @@
-import {Permissions, default as permissions} from '../permissions'
-import {PermissionDenied} from '../errors'
+import {Permissions, default as permissions} from '../../system/permissions'
+import {PermissionDenied} from '../../system/errors'
 
 export default function checkPermissionDecorator(settings, eventHandler) {
     return (ev) => {

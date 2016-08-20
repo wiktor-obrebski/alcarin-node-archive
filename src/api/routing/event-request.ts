@@ -1,13 +1,12 @@
 import logger from '../logger'
 import {clone} from '../../common/util/functions'
 
-export function EventRequestFactory(client, eventName, data, auth, emitCallback) {
+export function EventRequestFactory(eventName, data, auth, emitCallback) {
     var _replied = false;
-    console.log('here', auth, clone(auth));
+
     return Object.freeze({
         auth: clone(auth),
         data: clone(data),
-        client: client,
         name: eventName,
         answer: answerEvent,
 
@@ -26,7 +25,6 @@ export function EventRequestFactory(client, eventName, data, auth, emitCallback)
         args.unshift(`${eventName}:reply`);
         const result = emitCallback(...args);
         _replied = true;
-        return result;
     }
 
     function answerError(errObject) {
@@ -35,6 +33,6 @@ export function EventRequestFactory(client, eventName, data, auth, emitCallback)
             body: errObject.message
         };
         logger.info(`System error "${errObject.id}"`);
-        return answerEvent({error: err});
+        answerEvent({error: err});
     }
 }

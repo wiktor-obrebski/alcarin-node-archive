@@ -4,8 +4,8 @@ import logApiCall from './log-api-call'
 import checkPermissions from './check-permissions'
 
 export default [
-    errorsHandler,
     schemaValidator,
-    logApiCall,
     checkPermissions,
+    logApiCall,
+    errorsHandler,
 ];

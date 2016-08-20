@@ -1,4 +1,4 @@
-import {ValidationFailed} from '../errors'
+import {ValidationFailed} from '../../system/errors'
 import * as _ from 'lodash'
 import * as JjvSchema from 'jjv'
 
