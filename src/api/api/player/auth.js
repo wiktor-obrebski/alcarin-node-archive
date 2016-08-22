@@ -11,8 +11,12 @@ import Player from '../../../lib/system/player'
 
 import {composeAsync, onCatch} from '../../../common/util/async'
 import * as R from 'ramda'
+import * as Kefir from 'kefir'
 
 const bcrypt = Promise.promisifyAll(bcryptLib);
+
+const authFailedError   = new AuthorizationFailed('Invalid password or username');
+const invalidTokenError = new InvalidToken('Invalid Token');
 
 export default {
     verifyToken: EventHandler(verifyToken, {
@@ -46,38 +50,39 @@ export default {
 /**
  * user can authorize his socket. in effect his privillages (related with this socket)
  * will be setted to privilages related with his account.
- * he also get back a token - that can be used to get privilages back later, without login
- * it can be useful after connection lose, page reload and similar
+ * he also get back a token - that need to be used to authorize all later communication
  */
-async function login(ev) {
-    const {email, password} = ev.data;
+function login(data$) {
+    const player$ = data$
+        .prop('email')
+        .map(Player.findByField('email'))
+        .flatMap(Kefir.fromPromise);
 
-    const isPasswordMatch = R.curry(_isPasswordMatch);
-    const loginUserByEmail = composeAsync(
-        onCatch(ev.answerError),
-        ev.answer,
-        updatePermissions,
-        isPasswordMatch(password),
-        Player.findByField('email')
-    );
+    player$.log('player');
+    data$.prop('password').log('prop');
+    const passwordMatchTest$ = Kefir
+        .combine(
+            [data$.prop('password'), player$], isPasswordMatch
+        )
+        .flatMap(Kefir.fromPromise)
+        .log('combined')
+        .map(preparePermissionsObject);
 
-    return loginUserByEmail(email);
+    return passwordMatchTest$;
 
-    async function _isPasswordMatch(password, player) {
+    async function isPasswordMatch(password, player) {
         const match = player && await bcrypt.compareAsync(
             password, player.password
         );
         if (!match) {
-            return Promise.reject(
-                new AuthorizationFailed('Invalid password or username')
-            );
+            return Promise.reject(authFailedError);
         }
         return player;
     };
 
-    function updatePermissions(player) {
-        const permissionsBitValue = parseInt(player.permissions) ||
-                                    Permissions.PUBLIC;
+    function preparePermissionsObject(player) {
+        const permissionsBitValue =
+            parseInt(player.permissions) || Permissions.PUBLIC;
 
         return {
             token: generateSessionToken(player, permissionsBitValue),
@@ -103,12 +108,14 @@ async function login(ev) {
     }
 }
 
-async function verifyToken(ev) {
-    if (ev.auth.invalidToken) {
-        return ev.answerFail(new InvalidToken('Invalid Token'));
-    }
+function verifyToken(data$) {
+    const retrievePermissions = R.ifElse(
+        R.path(['__auth', 'invalidToken']),
+        R.partial(Kefir.constantError, [invalidTokenError]),
+        R.path(['__auth', 'permissions'])
+    );
 
-    return ev.answer({
-        permissions: ev.auth.permissions
-    });
+    return data$
+        .map(retrievePermissions)
+        .map(R.assoc('permissions', R.__, {}));
 }

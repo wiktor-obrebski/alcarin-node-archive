@@ -32,10 +32,15 @@ export default {
     }),
 };
 
-async function activate(args, ev) {
+/**
+ * intention is to register active character (with it's socket) to
+ * some listeners list. so, if something happen around char, this socket
+ * will be used to inform him
+ */
+async function activate(ev) {
     const playerChars = await Player.chars(ev.auth.playerId);
 
-    const char = playerChars.find(char => char.id === args.charId);
+    const char = playerChars.find(char => char.id === ev.data.charId);
     if (char) {
         ev.client.char = char;
         return ev.answer(char);
@@ -44,10 +49,10 @@ async function activate(args, ev) {
     const err = new PermissionDenied("Can't activate this character.");
     return ev.answerError(err);
 }
-async function sayPublic(args, ev) {
+async function sayPublic(ev) {
     const char = ev.client.char;
     if (char) {
-        await char.say(args.content);
+        await char.say(ev.data.content);
     } else {
         // this should be in some decorator, with permissions system
         const err = new CharActivationNeeded();
@@ -56,7 +61,7 @@ async function sayPublic(args, ev) {
     return ev.answer(true);
 }
 
-async function fetchEvents(args, ev) {
+async function fetchEvents(ev) {
     // const events = await Character.events(ev.client.char);
     return ev.answer([]);
 }

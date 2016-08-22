@@ -130,7 +130,7 @@ async function resumeTime() {
 }
 
 async function nowGameTime() {
-    var src = await this.currentTimestamp();
+    var src = await getCurrentTimestamp();
     return _.create(GameTime, {
         timestamp: src
     });

@@ -1,28 +1,32 @@
 import * as _ from 'lodash'
 import * as R from 'ramda'
-import * as jsonwebtoken from 'jsonwebtoken'
 
 import RouteDecorators from './route-decorators/index'
-import {EventRequestFactory} from './event-request'
-import {Permissions, PermissionsSets} from '../system/permissions'
-import config from '../config'
 import RouteHandlers from './handlers'
 import * as debug from 'ramda-debug'
+
+import * as Kefir from 'kefir'
+import {DEBUG, log} from '../../common/util'
 
 const decorateEventHandler = R.curry(_decorateEventHandler);
 const onClientConnect = R.curry(_onClientConnect);
 
 export function setupRouting(io) {
-    const decoratedRouting = R.map(
+    const decoratedRouting = R.mapObjIndexed(
         decorateEventHandler(RouteDecorators),
         RouteHandlers
     );
     io.on('connection', onClientConnect(decoratedRouting));
 }
 
-function _decorateEventHandler(decorators, eventHandler) {
+function _decorateEventHandler(decorators, eventHandler, eventName) {
+    const settings = Object.assign(
+        eventHandler.settings,
+        {__eventName: eventName}
+    );
+
     const curryDecorators = R.map(R.compose(
-        R.flip(R.call)(eventHandler.settings),
+        R.flip(R.call)(settings),
         R.curry
     ));
 
@@ -34,55 +38,52 @@ function _decorateEventHandler(decorators, eventHandler) {
 }
 
 function _onClientConnect(decoratedRouting, socket) {
-    const listenOnSocket = R.flip(socket.on).bind(socket);
-    const eventHandler = R.curry(baseEventHandler);
+    const registerHandlerForSocket = R.curry(_registerHandlerForSocket);
 
-    const enableListening = R.compose(
-        R.mapObjIndexed(listenOnSocket),
-        R.mapObjIndexed(eventHandler)
+    const streams = R.mapObjIndexed(
+        registerHandlerForSocket(socket),
+        decoratedRouting
     );
-    enableListening(decoratedRouting);
 
-    function baseEventHandler(apiHandler, eventName) {
-        return function onSocketEventHappen(...args) {
-            const data = args.shift() || {};
+    function _registerHandlerForSocket(socket, apiHandler, eventName) {
+        DEBUG && socket.on('disconnect', log('--- Lost connection with client'));
 
-            const authData = data.__apitoken ?
-                authorizeMessage(data.__apitoken) :
-                {permissions: PermissionsSets.anonymous};
-                console.log(authData);
+        const streamAtSocket = R.curry(_streamAtSocket);
 
-            const ev = EventRequestFactory(
-                eventName,
-                data,
-                authData,
-                this.emit.bind(this)
-            );
+        const incomeEventsStream$ = Kefir.stream(
+            streamAtSocket(socket, eventName)
+        );
+        const reaction$ = apiHandler(incomeEventsStream$.toProperty());
 
-            apiHandler(ev);
-        };
-    }
+        const emit = R.curryN(2, socket.emit.bind(socket));
 
-    function authorizeMessage(token) {
-        try {
-            const verify = R.curryN(3, jsonwebtoken.verify.bind(jsonwebtoken));
+        DEBUG && reaction$.log(`${eventName} response:`);
 
-            const decryptData = R.compose(
-                R.pick(['permissions', 'playerId']),
-                verify(R.__, config.jwtAppSecret, {algorithms: ['HS256']})
-            );
+        reaction$.observe({
+            value: emit(`${eventName}:reply`),
+            error: R.compose(
+                emit(`${eventName}:reply`), mapError
+            ),
+        });
 
-            return decryptData(token);
-        } catch (err) {
-            if(!(err instanceof jsonwebtoken.JsonWebTokenError)) {
-                throw err;
-            }
-
+        function mapError(errObject) {
             return {
-                invalidToken: true,
-                permissions: PermissionsSets.anonymous,
-            };
+                error: {
+                    reason: errObject.id,
+                    body: errObject.message
+                }
+            }
         }
+
+        function _streamAtSocket(socket, eventName, emitter) {
+            socket.on(
+                eventName,
+                (data) => emitter.value(data)
+            );
+            socket.on('disconnect', () => emitter.end());
+        }
+
+        return incomeEventsStream$;
     }
 }
 

@@ -4,6 +4,7 @@ api:
   volumes:
     - ./:/app
   environment:
+    NODE_ENV: development
     NODE_PATH: ./src/api
     PORT: 8888
   ports:

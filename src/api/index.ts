@@ -3,7 +3,7 @@ import config     from './config'
 import logger     from './logger'
 import alcarin    from '../lib'
 
-import fs = require('fs');
+import '../common/util/kefir-ext'
 
 main();
 

@@ -1,15 +1,13 @@
 import logger from '../../logger'
 import * as R from 'ramda'
 
-const log = R.compose(
+const log = (ev) => () => R.compose(
     logger.info.bind(logger),
     R.replace('%s', R.__, 'Call "%s"'),
-    R.prop('name')
-);
+)(ev);
 
 export default function logCallsDecorator(settings, eventHandler) {
-    return R.compose(
-        eventHandler,
-        R.tap(log)
+    return (data$) => eventHandler(
+        data$.onAny(log(settings.__eventName))
     );
 }
