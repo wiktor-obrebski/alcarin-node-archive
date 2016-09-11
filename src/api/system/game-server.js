@@ -1,4 +1,4 @@
-import * as ioLib from 'socket.io'
+import {default as ioLib} from 'socket.io'
 import {setupRouting} from '../routing/route'
 import {Permissions} from './permissions'
 

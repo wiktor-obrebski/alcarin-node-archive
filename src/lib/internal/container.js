@@ -1,7 +1,7 @@
 /*
  this module needs to be fixed, was wrote for mongodb
  */
-var _         = require('lodash');
+// var _         = require('lodash');
 
 var substance = require('../substance');
 var living    = require('../living');

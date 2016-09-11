@@ -24,7 +24,7 @@ const composeAsync = (...functions) => {
 
     return R.compose(
         thenChain,
-        Promise.resolve.bind(Promise),
+        Promise.resolve.bind(Promise)
     );
 };
 

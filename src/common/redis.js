@@ -1,11 +1,16 @@
 import * as redisLib from 'redis'
-import * as Promise from 'bluebird'
-import * as _       from 'lodash'
+import * as R       from 'ramda'
+import {streamify} from './util/functions'
 
 const DEFAULT_PORT = 6379;
 
 var redisClient = null;
 var redisConfig = null;
+
+const streamMethods = [
+    'hget',
+    'hset',
+];
 
 export {
     init,
@@ -30,7 +35,16 @@ function createClient() {
         );
         redisClient.on('error', (err) => reject(err));
         redisClient.on('connect', () => resolve(redisClient));
-        Promise.promisifyAll(redisClient);
+
+        const assign = R.curryN(2, Object.assign);
+        const streamifyMethods = R.compose(
+            assign(redisClient),
+            R.map(streamify),
+            R.pick(streamMethods)
+        );
+        redisClient = streamifyMethods(redisClient);
+
+        resolve(redisClient);
     });
 }
 

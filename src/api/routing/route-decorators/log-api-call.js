@@ -3,7 +3,7 @@ import * as R from 'ramda'
 
 const log = (ev) => () => R.compose(
     logger.info.bind(logger),
-    R.replace('%s', R.__, 'Call "%s"'),
+    R.replace('%s', R.__, 'Call "%s"')
 )(ev);
 
 export default function logCallsDecorator(settings, eventHandler) {

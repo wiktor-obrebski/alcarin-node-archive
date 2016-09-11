@@ -1,4 +1,4 @@
-FROM node:6
+FROM node:6.5
 MAINTAINER psychowico <psychowico@gmail.com>
 
 RUN npm install -g nodemon

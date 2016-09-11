@@ -19,13 +19,24 @@ export const PermissionsSets = {
 };
 
 export default {
-    toBits(set: Array<number>): number {
-        return set.reduce((prev: number, perm: number): number => {
-            const bitmask: number = 1 << (perm - 1);
+    /**
+     * convert set of numeric permissions to one number (bitmask)
+     * @param  {Array<number>} set
+     * @return {number}
+     */
+    toBits(set) {
+        return set.reduce((prev, perm) => {
+            const bitmask = 1 << (perm - 1);
             return (prev | bitmask);
         }, 0);
     },
-    has(playerPermissions: number, permission: number): Boolean {
+    /**
+     * check if player have specific indexed permission in permissions number mask
+     * @param  {number}  playerPermissions
+     * @param  {number}  permission
+     * @return {Boolean}
+     */
+    has(playerPermissions, permission) {
         return (playerPermissions & permission) === permission;
     }
 };

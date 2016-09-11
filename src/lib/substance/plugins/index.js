@@ -1,4 +1,4 @@
-var _ = require('lodash');
+// var _ = require('lodash');
 
 module.exports = {
     Factory: {
@@ -26,9 +26,9 @@ function pluginCreate(pluginName, material) {
     try {
         var pluginPath = plugins.get(pluginName);
         var pluginClass = require(pluginPath);
-        return _.create(pluginClass, {
-            material: material
-        });
+        // return _.create(pluginClass, {
+        //     material: material
+        // });
     } catch (err) {
         throw new Error(
             'Can not find substance plugin file "' + pluginPath + '".'

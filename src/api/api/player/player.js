@@ -1,15 +1,18 @@
 import EventHandler from '../event-handler'
 
-import * as Promise from 'bluebird'
-import * as bcryptLib from 'bcrypt'
+import * as bcrypt from 'bcrypt'
 import * as R from 'ramda'
 
 import Player from '../../../lib/system/player'
 import {ApiError} from '../../system/errors'
 import {PermissionsSets, default as permissions} from '../../system/permissions'
 import auth from './auth'
+import * as Kefir from 'kefir'
 
-const bcrypt = Promise.promisifyAll(bcryptLib)
+const emailOccupiedError = new ApiError(
+    'email.occupied',
+    'Email used by another player'
+);
 
 export default {
     'create': EventHandler(createPlayer, {
@@ -46,38 +49,35 @@ export default {
     'fetchChars': EventHandler(fetchChars),
 };
 
-async function createPlayer(ev) {
-    const {email, password} = ev.data;
-    const existingPlayer = await Player.findByField('email', email);
+/**
+ * @param {Stream<{email, password}>} data$ [description]
+ */
+function createPlayer(data$) {
+    const hashAsync = Kefir.fromNodeCallback(bcrypt.hash).bind(bcrypt);
+    // const existingPlayer$ = Player.findByField('email', data$.prop('email'));
+    // const existingPlayer = await Player.findByField('email', email);
+    // return existingPlayer$
+    //     .map(R.ifElse(R.isEmpty, createPlayer, emailOccupiedError));
 
-    if (existingPlayer !== null) {
-        const err = new ApiError(
-            'email.occupied',
-            'Email used by another player'
-        );
-        return ev.answerError(err);
-    }
+    // data$.prop('password')
+    //     .map((password) => bcrypt.hashAsync(password, 10))
+    //     .flatMap(Kefir.fromPromise)
+    //     .map((cryptedPassowrd) => Player.create({
+    //         email: email,
+    //         password: cryptedPassword,
+    //         permissions: permissions.toBits(PermissionsSets.player)
+    //     }));
 
-    const cryptedPassword = await bcrypt.hashAsync(password, 10);
-
-    const player = await Player.create({
-        email: email,
-        password: cryptedPassword,
-        permissions: permissions.toBits(PermissionsSets.player)
-    });
-
-    return await auth.login.handler(ev);
+    // return await auth.login.handler(ev);
 }
 
-async function createChar(ev) {
-    const char = await Player.createChar(ev.auth.playerId, {
-        name: ev.data.name
-    });
-    return ev.answer(char);
+function createChar(data$) {
+    const createCharProps$ = data$.map(R.pick(['playerId', 'name']));
+    return Player.createChar(createCharProps$);
 }
 
-async function fetchChars(ev) {
-    const chars = await Player.chars(ev.auth.playerId);
-    const charsList = chars.map(R.pick(['id', 'name']));
-    return ev.answer(charsList);
+function fetchChars(data$) {
+    const restrictCharsData = R.map(R.pick(['id', 'name']));
+    return Player.chars(data$.playerId$())
+        .map(restrictCharsData);
 }

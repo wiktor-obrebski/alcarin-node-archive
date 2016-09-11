@@ -14,7 +14,7 @@ const Tables = [
             permissions: {
                 type: 'bigint',
                 notNull: true,
-                default: 1,
+                default: 2, // 2 means user can login and play game.
             }
         },
         options: {}

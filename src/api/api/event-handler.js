@@ -1,6 +1,6 @@
 export default function EventHandler(
     handler,
-    settings = null
+    settings = {}
 ) {
     return {
         handler,

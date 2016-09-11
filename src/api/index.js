@@ -16,6 +16,6 @@ async function main() {
         logger.info('Server listening on port %s.', port);
     } catch (err) {
         logger.error('Can not initialize alcarin lib.', err);
-        process.exit();
+        // process.exit();
     }
 }

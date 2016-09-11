@@ -1,5 +1,9 @@
 import {redis} from '../../common/redis'
-import * as _     from 'lodash'
+import * as R from 'ramda'
+import * as Kefir from 'kefir'
+
+const parseDecInt  = R.curryN(2, parseInt)(R.__, 10);
+const parseDecInt$ = R.compose(Kefir.constant, parseDecInt);
 
 // this module need refactoring.
 // three time values should be stored in one object, so we can faster
@@ -60,14 +64,19 @@ function getHour(floating) {
     return hours;
 }
 
-async function getCurrentTimestamp() {
-    var freezed      = await fetchFreeze();
-    var lastGameTime = await fetchGameTime();
-    if (freezed) {
-        return lastGameTime;
+function getCurrentTimestamp() {
+    const freezed$ = fetchFreeze();
+    const lastGameTime$ = fetchGameTime();
+    return Kefir.combine(
+        [freezed$, lastGameTime$],
+        (freezed, lastGameTime) => freezed ? lastGameTime : currGameTime(lastGameTime)
+    ).flatMap();
+
+    function currGameTime(lastGameTime) {
+        return fetchLastRealTime().map(
+            (lastRealTime) => lastGameTime + currentRealTime() - lastRealTime
+        );
     }
-    var lastRealTime = await fetchLastRealTime();
-    return lastGameTime + currentRealTime() - lastRealTime;
 }
 
 function currentRealTime() {
@@ -75,25 +84,25 @@ function currentRealTime() {
 }
 
 function fetchFreeze() {
-    return redis().hgetAsync('gametime', 'freeze').then(
-        (result) => result === 'true'
-    );
+    return redis().hget('gametime', 'freeze')
+        .map(R.equals('true'));
 }
 
-async function fetchLastRealTime() {
-    var real = await redis().hgetAsync('gametime', 'last_real_timestamp');
-    if (real) {
-        real = parseInt(real, 10);
-    } else {
-        real = currentRealTime();
-        await redis().hsetAsync('gametime', 'last_real_timestamp', real)
+function fetchLastRealTime() {
+    return redis().hget('gametime', 'last_real_timestamp')
+        .map(R.ifElse(R.isEmpty, initRealTime, parseDecInt$))
+        .flatMap();
+
+    function initRealTime() {
+        const currRealTime = currentRealTime();
+        return redis().hset('gametime', 'last_real_timestamp', currRealTime)
+            .map(R.always(currRealTime));
     }
-    return real;
 }
 
 function fetchGameTime() {
-    return redis().hgetAsync('gametime', 'last_game_timestamp')
-        .then((game) => {
+    return redis().hget('gametime', 'last_game_timestamp')
+        .map((game) => {
             if (game) {
                 return parseInt(game, 10);
             }
@@ -129,16 +138,16 @@ async function resumeTime() {
     }
 }
 
-async function nowGameTime() {
-    var src = await getCurrentTimestamp();
-    return _.create(GameTime, {
-        timestamp: src
-    });
+function nowGameTime() {
+    return getCurrentTimestamp();
+    // return _.create(GameTime, {
+    //     timestamp: src
+    // });
 }
 function gameTimeFromTimestamp(timestamp) {
-    return _.create(GameTime, {
-        timestamp: timestamp
-    });
+    // return _.create(GameTime, {
+    //     timestamp: timestamp
+    // });
 }
 
 // light intensity, from 0-1

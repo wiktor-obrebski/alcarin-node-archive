@@ -3,17 +3,15 @@ import EventHandler from '../event-handler'
 import {Permissions} from '../../system/permissions'
 import {AuthorizationFailed, InvalidToken} from '../../system/errors'
 import config from '../../config'
-import * as Promise from 'bluebird'
-import * as bcryptLib from 'bcrypt'
+import * as bcrypt from 'bcrypt'
 
 import * as jsonwebtoken from 'jsonwebtoken'
 import Player from '../../../lib/system/player'
 
 import {composeAsync, onCatch} from '../../../common/util/async'
+import {streamify} from '../../../common/util/functions'
 import * as R from 'ramda'
 import * as Kefir from 'kefir'
-
-const bcrypt = Promise.promisifyAll(bcryptLib);
 
 const authFailedError   = new AuthorizationFailed('Invalid password or username');
 const invalidTokenError = new InvalidToken('Invalid Token');
@@ -53,31 +51,29 @@ export default {
  * he also get back a token - that need to be used to authorize all later communication
  */
 function login(data$) {
-    const player$ = data$
-        .prop('email')
-        .map(Player.findByField('email'))
-        .flatMap(Kefir.fromPromise);
+    const compareAsync = streamify(bcrypt.compare.bind(bcrypt));
+    const player$ = Player.findByField('email', data$.prop('email'));
 
-    player$.log('player');
-    data$.prop('password').log('prop');
-    const passwordMatchTest$ = Kefir
-        .combine(
-            [data$.prop('password'), player$], isPasswordMatch
-        )
-        .flatMap(Kefir.fromPromise)
-        .log('combined')
+    return data$.prop('password')
+        .combine(player$, isPasswordMatch)
+        .flatMap()
         .map(preparePermissionsObject);
 
-    return passwordMatchTest$;
-
-    async function isPasswordMatch(password, player) {
-        const match = player && await bcrypt.compareAsync(
-            password, player.password
-        );
-        if (!match) {
-            return Promise.reject(authFailedError);
+    function isPasswordMatch(password, player) {
+        if (!player) {
+            return err();
         }
-        return player;
+
+        return compareAsync(
+            password,
+            player.password
+        ).map(
+            (match) => match ? player : err()
+        );
+
+        function err() {
+            return Kefir.constantError(authFailedError);
+        }
     };
 
     function preparePermissionsObject(player) {

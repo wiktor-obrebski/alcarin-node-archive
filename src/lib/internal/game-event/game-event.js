@@ -1,37 +1,36 @@
 'use strict';
 
-var Promise    = require('bluebird');
-var _          = require('lodash');
+// var _          = require('lodash');
 
 var gameObject  = require('../game-object');
 var TimeManager = require('../../system/game-time').Manager;
 
 var EventsDefinition = require('./events-types').definition;
 
-var GameEvent = _.create(gameObject.GameObject, {
-    collection: 'game.events',
-    options: {},
+// var GameEvent = _.create(gameObject.GameObject, {
+//     collection: 'game.events',
+//     options: {},
 
-    /**
-     * serialize game event to database write ready structure, per any
-     * recipient
-     * @type {Array}
-     */
-    link: serializeForObservers,
-    detectRecipients: () => {
-        Promise.reject(new Error(
-            'GameEvent need `detectRecipients` method ' +
-            'to point potential recipients'
-        ));
-    }
-});
+//     /**
+//      * serialize game event to database write ready structure, per any
+//      * recipient
+//      * @type {Array}
+//      */
+//     link: serializeForObservers,
+//     detectRecipients: () => {
+//         Promise.reject(new Error(
+//             'GameEvent need `detectRecipients` method ' +
+//             'to point potential recipients'
+//         ));
+//     }
+// });
 
-module.exports = {
-    GameEvent: GameEvent,
-    Factory: _.create(gameObject.Factory, {
-        gameObjectClass: GameEvent
-    })
-};
+// module.exports = {
+//     GameEvent: GameEvent,
+//     Factory: _.create(gameObject.Factory, {
+//         gameObjectClass: GameEvent
+//     })
+// };
 
 async function serializeForObservers() {
     var ev = this;

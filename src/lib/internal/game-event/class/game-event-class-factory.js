@@ -1,5 +1,3 @@
-import * as _ from 'lodash'
-
 export default {
     /**
      * this game event can be spotted on entire world.
@@ -20,18 +18,18 @@ var eventTypes = {
 };
 
 function worldEventFactory(source, type, args) {
-    return _.create(eventTypes.WorldEvent, {
-        source: source,
-        type: type,
-        args: args
-    });
+    // return _.create(eventTypes.WorldEvent, {
+    //     source: source,
+    //     type: type,
+    //     args: args
+    // });
 }
 
 function privateEventFactory(source, type, args, targetObservers) {
-    return _.create(eventTypes.PrivateEvent, {
-        source: source,
-        type: type,
-        args: args,
-        observers: targetObservers
-    });
+    // return _.create(eventTypes.PrivateEvent, {
+    //     source: source,
+    //     type: type,
+    //     args: args,
+    //     observers: targetObservers
+    // });
 }

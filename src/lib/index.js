@@ -9,7 +9,7 @@ export default {
     initilize: initializeAlcarinLib
 };
 
-async function initializeAlcarinLib(config: any) {
+async function initializeAlcarinLib(config) {
     const dbPromise    = dbConnect(config.postgresConnectionString);
     const redisPromise = initRedis(config.redis);
 

@@ -1,7 +1,4 @@
 export class AlcarinError {
-    id: String;
-    message: String;
-
     constructor(message) {
         this.message = message;
         this.id = 'alcarin.error';

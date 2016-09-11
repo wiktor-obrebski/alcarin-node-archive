@@ -1,13 +1,14 @@
 import {db} from '../common/db'
 import {createObject} from '../common/util/functions'
-import * as assert from 'assert'
+import {default as assert} from 'assert'
 import * as R from 'ramda'
+import * as Kefir from 'kefir'
 
 const GameObjectService = {
     find:        R.curry(findGameObjects),
     findOne:     R.curry(findOneGameObject),
     findById:    R.curry(findGameObjectById),
-    findByField: R.curry(findGameObjectByField)(false),
+    findByField: R.curry(findByField)(false),
     create:      R.curry(createNewGameObject),
     // fromRaw:  gameObjectFromRaw,
     // count:    findGameObjectsCount
@@ -41,48 +42,56 @@ async function findGameObjectsCount(where) {
     return await collection.countAsync(where);
 }
 
-function findGameObjectByField(mustExist, table, name, value) {
-    const fnName = mustExist ? 'one' : 'oneOrNone';
-    return db()[fnName](
-        `SELECT * FROM ${table} WHERE ${name}=$1`, value
-    );
+function findByField(mustExist, table, name, values$) {
+    const query     = `SELECT * FROM ${table} WHERE ${name}=$1`;
+    const funToFind = db()[mustExist ? 'one$' : 'oneOrNone$'](query);
+    return values$.flatMap(funToFind);
 }
 
-async function findGameObjects(table, where) {
+function findGameObjects(table, where) {
     return findGameObjectsCore(table, 'manyOrNone', where);
 }
 
-async function findOneGameObject(table, where) {
+function findOneGameObject(table, where) {
     return findGameObjectsCore(table, 'oneOrNone', where);
 }
 
-async function findGameObjectsCore(table, methodName, where) {
-    const fields = Object.keys(where);
-    assert(fields.length !== 0, `
-        [${table}] Can not search for objects with empty 'where' condition.
-    `);
-
-    const values = fields.map(field => `${field} = \$<${field}>`);
-    return db()[methodName](`
+function findGameObjectsCore(table, methodName, where$) {
+    const query = `
         SELECT *
         FROM ${table}
-        WHERE ${values.join('AND')}
-    `, where);
+        WHERE %s
+    `;
+
+    return where$.flatMap(
+        (where) => {
+            const fields = Object.keys(where);
+            assert(fields.length !== 0, `
+                [${table}] Can not search for objects with empty 'where' condition.
+            `);
+            const values = fields.map(field => `${field} = \$<${field}>`);
+            const finishQuery = query.replace('%s', values.join('AND'));
+            const method = db()[methodName + '$'](finishQuery);
+            return method(where);
+        }
+    );
 }
 
 function findGameObjectById(table, id) {
-    return findGameObjectByField(true, table, 'id', id);
+    return findByField(true, table, 'id', id);
 }
 
-async function createNewGameObject(table, data) {
-    const fields = Object.keys(data);
-    assert(fields.length !== 0, `
-        [${table}] Can not search for objects with empty 'where' condition.
-    `);
-    const values = fields.map(field => `\$<${field}>`).join(',');
-    return db().one(`
-        INSERT INTO ${table}(${fields.join(',')})
-        VALUES (${values})
-        RETURNING id
-    `, data).then((result) => Object.assign(data, result));
+function createNewGameObject(table, data$) {
+    return data$.flatMap(
+        (data) => {
+            const fields = Object.keys(data);
+            const values = fields.map(field => `\$<${field}>`).join(',');
+            const method = db().one$(`
+                INSERT INTO ${table}(${fields.join(',')})
+                VALUES (${values})
+                RETURNING id
+            `);
+            return method(data).map((result) => Object.assign(data, result));
+        }
+    ).log();
 }

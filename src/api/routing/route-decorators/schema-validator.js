@@ -1,6 +1,5 @@
 import {ValidationFailed} from '../../system/errors'
-import * as _ from 'lodash'
-import * as JjvSchema from 'jjv'
+import {default as JjvSchema} from 'jjv'
 import * as R from 'ramda'
 import * as Kefir from 'kefir'
 

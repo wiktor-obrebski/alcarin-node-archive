@@ -1,4 +1,4 @@
-var _        = require('lodash');
+// var _        = require('lodash');
 var material = require('./material');
 
 /**
@@ -16,13 +16,13 @@ var Substance = {
 
 module.exports = {
     Substance: Substance,
-    Factory: substanceFactory,
+    // Factory: substanceFactory,
 };
 
-function substanceFactory(container, data) {
-    return _.create(Substance, {
-        _raw: data,
-        container: container,
-        material: material.Factory.fromRaw(data.material)
-    });
-}
+// function substanceFactory(container, data) {
+//     return _.create(Substance, {
+//         _raw: data,
+//         container: container,
+//         material: material.Factory.fromRaw(data.material)
+//     });
+// }

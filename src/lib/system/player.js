@@ -1,5 +1,4 @@
-// I want create services for managing objects.
-// objects shouldn't have function for self manipulation,
+import * as R from 'ramda'
 
 import {createService} from '../game-object-service'
 
@@ -8,21 +7,24 @@ import Location from '../location/location'
 
 export default createService('player', {
     chars: fetchPlayerChars,
-    createChar: createCharForPlayer
+    createChar: R.curry(createChar)
 });
 
-async function fetchPlayerChars(playerId) {
-    return await Character.find({fk_player: playerId});
+function fetchPlayerChars(playerId$) {
+    const where$ = playerId$.map((playerId) => ({fk_player: playerId}));
+    return Character.find(where$);
 }
 
-async function createCharForPlayer(playerId, args) {
-    var globalLoc = await Location.fetchGlobal();
-    var char = await Character.create({
-        fk_player: playerId,
+/**
+ * @param  {{playerId: number, name: string}} $props
+ */
+function createChar(props$) {
+    const globalLoc$      = Location.fetchGlobal();
+    const playerCharData$ = props$.combine(globalLoc$, (props, globalLoc) => ({
+        fk_player: props.playerId,
         // temporary, world global location
         fk_location: globalLoc.id,
-        name: args.name
-    });
-    // await globalLoc.inside().put(char);
-    return char;
+        name: props.name
+    }));
+    return Character.create(playerCharData$);
 }

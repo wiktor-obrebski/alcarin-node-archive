@@ -22,6 +22,6 @@ function playableRaces(request$) {
 
 function getGameTime(data$) {
     return data$
-        .map(GameTime.now)
-        .flatMap(Kefir.fromPromise);
+        .flatMap(GameTime.now)
+        .map((timestamp) => ({timestamp}));
 }

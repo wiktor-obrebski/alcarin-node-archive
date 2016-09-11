@@ -1,5 +1,6 @@
-import * as promisePostgresLib from 'pg-promise'
-import * as Observable from 'kefir'
+import {default as promisePostgresLib} from 'pg-promise'
+import * as Kefir from 'kefir'
+import * as R from 'ramda'
 
 const promisePostgres = promisePostgresLib();
 var driver = null;
@@ -28,12 +29,14 @@ function decorateToObservables(postgresDriver) {
         fnName => makeObservable(postgresDriverCopy, fnName)
     );
 
-    function makeObservable(object, fnName) {
-        const originFunction = object[fnName];
-        object[fnName + '_'] = function (...args) {
-            const resultsPromise = originFunction.apply(this, args);
-            return Observable.fromPromise(resultsPromise);
-        };
+    function makeObservable(driver, fnName) {
+        const originFunction = driver[fnName];
+        driver[fnName + '$'] = R.curryN(
+            2, R.compose(
+                Kefir.fromPromise,
+                originFunction.bind(driver)
+            )
+        );
     }
 
     return postgresDriverCopy;

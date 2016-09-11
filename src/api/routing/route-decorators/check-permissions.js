@@ -17,7 +17,10 @@ export default function checkPermissionDecorator(settings, eventHandler) {
             .map(authorizeMessage);
 
         const dataWithAuth$ = Kefir.combine(
-            [auth$, data$], R.assoc('__auth')
+            [auth$, data$], function (auth, data) {
+                data.playerId = auth.playerId;
+                return R.assoc('__auth', auth, data);
+            }
         );
 
         const acceptUpdated = R.partial(eventHandler, [dataWithAuth$]);
@@ -70,7 +73,7 @@ function authorizeMessage(token) {
 
         return decryptData(token);
     } catch (err) {
-        console.log(err);
+        console.error('authorization problem', err);
         if(!(err instanceof jsonwebtoken.JsonWebTokenError)) {
             throw err;
         }

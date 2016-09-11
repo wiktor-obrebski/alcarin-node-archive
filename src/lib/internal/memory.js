@@ -4,7 +4,7 @@
     this module was written for mongo, need rewrite
  */
 
-var _ = require('lodash');
+// var _ = require('lodash');
 
 // var collection = mongo.driver().collection('game.chars.memory');
 
@@ -35,7 +35,7 @@ async function defaultName(arg) {
 }
 
 function memoryFactory(forWho) {
-    return _.create(Memory, {
-        who: forWho,
-    });
+    // return _.create(Memory, {
+    //     who: forWho,
+    // });
 }

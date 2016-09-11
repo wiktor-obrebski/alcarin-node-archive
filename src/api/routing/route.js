@@ -1,12 +1,11 @@
-import * as _ from 'lodash'
 import * as R from 'ramda'
 
 import RouteDecorators from './route-decorators/index'
 import RouteHandlers from './handlers'
-import * as debug from 'ramda-debug'
 
 import * as Kefir from 'kefir'
 import {DEBUG, log} from '../../common/util'
+import logger from '../logger';
 
 const decorateEventHandler = R.curry(_decorateEventHandler);
 const onClientConnect = R.curry(_onClientConnect);
@@ -62,9 +61,13 @@ function _onClientConnect(decoratedRouting, socket) {
         reaction$.observe({
             value: emit(`${eventName}:reply`),
             error: R.compose(
-                emit(`${eventName}:reply`), mapError
+                emit(`${eventName}:reply`), mapError, R.tap(stdError)
             ),
         });
+
+        function stdError(errObject) {
+            DEBUG && logger.error(errObject.body);
+        }
 
         function mapError(errObject) {
             return {
